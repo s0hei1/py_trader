@@ -1,6 +1,6 @@
 import streamlit as st
 from streamlit import session_state as state
-from src.ui.viewmodel.moqet_inv_dash_vm import TradeVM
+from src.ui.viewmodel.trade_vm import TradeVM
 
 if not "trade_vm" in st.session_state:
     state.trade_vm : TradeVM = TradeVM()
@@ -8,19 +8,24 @@ if not "trade_vm" in st.session_state:
 st.set_page_config(layout="wide")
 
 cols = st.columns(2)
+
 with cols[0]:
     st.text_input(
         "Risk Percentage %",
-        value=state.trade_vm.get_risk_percentage(),
+        value=state.trade_vm.risk_percentage,
         key="risk_percentage_input",
         on_change=lambda: state.trade_vm.set_risk_percentage(
             state.risk_percentage_input
         ))
 
 with cols[1]:
-    volume_size = st.text_input("Volume Size $", value = "1000")
-
-
+    st.text_input(
+        "Volume Size $",
+        value=state.trade_vm.volume_size,
+        key="volume_size_input",
+        on_change=lambda: state.trade_vm.set_volume_size(
+            state.volume_size_input
+        ))
 
 cols = st.columns(2)
 
