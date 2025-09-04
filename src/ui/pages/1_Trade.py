@@ -21,16 +21,16 @@ with cols[0]:
 with cols[1]:
     st.text_input(
         "Volume Size $",
-        value=state.trade_vm.volume_size,
-        key="volume_size_input",
-        on_change=lambda: state.trade_vm.set_volume_size(
+        value=state.trade_vm.balance,
+        key="balance_input",
+        on_change=lambda: state.trade_vm.set_balance(
             state.volume_size_input
         ))
 
 cols = st.columns(2)
 
 with cols[0]:
-    currency = st.selectbox("Select Currency", ["EURUSD"])
+    currency = st.selectbox("Select Currency", ["EURUSDb"])
 
 with cols[1]:
     time_frame = st.selectbox("Select Time Frame", [None,"m15","H1","H4","Daily"])

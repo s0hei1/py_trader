@@ -123,19 +123,28 @@ def set_pending_order(
         entry_price: float,
         stop_loss: float,
         take_profit: float,
-):
+) -> Mt5Result[tuple]:
 
-    request = mt5.TradeRequest(
+    request : mt5.TradeRequest = mt5.TradeRequest(
         action = mt5.TRADE_ACTION_PENDING,
         symbol = symbol.symbol_fullname,
         volume = volume,
+        type = action.mt5_type,
         price = entry_price,
         sl = stop_loss,
-        tp = take_profit
-
-
+        tp = take_profit,
+        devition = 10,
+        magic = 1000,
+        type_time = mt5.ORDER_TIME_GTC,
+        type_filling = mt5.ORDER_FILLING_RETURN
     )
 
-    mt5.order_send(
+    trade_request_result = mt5.order_send(request,)
 
+    lasterror = mt5_last_error()
+    return Mt5Result(
+        has_error=lasterror.result_code == 1,
+        message = lasterror.message,
+        result_code = lasterror.result_code,
+        result = trade_request_result,
     )
