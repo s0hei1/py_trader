@@ -139,6 +139,7 @@ def set_pending_order(
         type_filling = mt5.ORDER_FILLING_RETURN
     )
 
+
     trade_request_result = mt5.order_send(request,)
 
     lasterror = mt5_last_error()
