@@ -21,4 +21,3 @@ class LastTickResult():
     bid : float
     ask : float
 
-

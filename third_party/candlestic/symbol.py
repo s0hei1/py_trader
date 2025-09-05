@@ -5,16 +5,19 @@ from dataclasses import dataclass
 class Symbol:
     base_currency: str
     quote_currency: str
+    decimal_places : float
     alias_names: list[str] | None = None
     prefix: str = ''
     suffix: str = ''
 
-    def __init__(self, base_currency: str, quote_currency: str, /, alias_names: list[str] | None = None,
+    def __init__(self, base_currency: str, quote_currency: str, decimal_places : float, /, alias_names: list[str] | None = None,
                  prefix: str = '',
-                 suffix: str = '', ):
+                 suffix: str = '',
+                 ):
         self.base_currency = base_currency
         self.quote_currency = quote_currency
         self.alias_names = alias_names
+        self.decimal_places = decimal_places
         self.prefix = prefix
         self.suffix  = suffix
 

@@ -1,6 +1,5 @@
 import MetaTrader5 as mt5
 from typing import Callable, TypeVar, ParamSpec
-from functools import wraps
 import datetime as dt
 from third_party.candlestic.candle import Candle
 from operator import itemgetter
@@ -9,11 +8,10 @@ from third_party.candlestic.symbol import Symbol
 from third_party.candlestic.time_frame import TimeFrame
 from third_party.mt5_overhead.exception import MetaTraderIOException
 from third_party.mt5_overhead.mt5_result import LastErrorResult, Mt5Result, LastTickResult
-from third_party.mt5_overhead.mt5_rquest import ActionEnum, Action
+from third_party.mt5_overhead.ordertype import OrderType
 
 P = ParamSpec("P")
 T = TypeVar("T")
-
 
 def mt5_last_error() -> LastErrorResult:
     lasterror = mt5.last_error()
@@ -22,9 +20,7 @@ def mt5_last_error() -> LastErrorResult:
         result_code=lasterror[0]
     )
 
-
-def _mt5_initialize(func: Callable[P, Mt5Result[T | None]]) -> Callable[P, Mt5Result[T | None]]:
-    @wraps(func)
+def _mt5_initialize(func: Callable[P, Mt5Result[T | None]]) -> Callable[... , Mt5Result[T | None]]:
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> Mt5Result[T | None]:
         init_result = mt5.initialize()
         if not init_result:
@@ -38,7 +34,7 @@ def _mt5_initialize(func: Callable[P, Mt5Result[T | None]]) -> Callable[P, Mt5Re
 
         try:
             return func(*args, **kwargs)
-        except MetaTraderIOException:
+        except MetaTraderIOException as e:
             _last_error = mt5_last_error()
             return Mt5Result(
                 has_error=True,
@@ -114,38 +110,44 @@ def get_symbol_current_price(symbol: Symbol) -> Mt5Result[float]:
         result=last_tick_result
     )
 
-
 @_mt5_initialize
 def set_pending_order(
-        action : Action,
+        order_type : OrderType,
         symbol: Symbol,
         volume : float,
         entry_price: float,
         stop_loss: float,
         take_profit: float,
-) -> Mt5Result[tuple]:
+) -> Mt5Result[mt5.OrderSendResult]:
+    request = {
+        "action": mt5.TRADE_ACTION_PENDING,
+        "symbol": symbol.symbol_name,
+        "volume": volume,
+        "type": order_type.mt5_type,
+        "price": entry_price,
+        "sl": stop_loss,
+        "tp": take_profit,
+        "deviation": 20,
+        "magic": 1000,
+        "comment": "from python",
+        "type_time": mt5.ORDER_TIME_GTC,
+        "type_filling": mt5.ORDER_FILLING_RETURN,
+    }
 
-    request : mt5.TradeRequest = mt5.TradeRequest(
-        action = mt5.TRADE_ACTION_PENDING,
-        symbol = symbol.symbol_fullname,
-        volume = volume,
-        type = action.mt5_type,
-        price = entry_price,
-        sl = stop_loss,
-        tp = take_profit,
-        devition = 10,
-        magic = 1000,
-        type_time = mt5.ORDER_TIME_GTC,
-        type_filling = mt5.ORDER_FILLING_RETURN
-    )
+    order_send_result : mt5.OrderSendResult = mt5.order_send(request)
 
-
-    trade_request_result = mt5.order_send(request,)
+    if order_send_result.retcode != 10009:
+        return Mt5Result(
+            has_error=True,
+            message=order_send_result.comment,
+            result_code=order_send_result.retcode,
+            result=order_send_result,
+        )
 
     lasterror = mt5_last_error()
     return Mt5Result(
-        has_error=lasterror.result_code == 1,
+        has_error=lasterror.result_code != 1,
         message = lasterror.message,
         result_code = lasterror.result_code,
-        result = trade_request_result,
+        result = order_send_result,
     )

@@ -17,14 +17,25 @@ class TimeFrames(Enum):
     Monthly = TimeFrame(name="monthly", mt5_value=mt5.TIMEFRAME_MN1, included_m1=43200)
 
     @classmethod
-    @lru_cache
     def get_time_frame_by_mt5_value(cls, mt5_value: int) -> 'TimeFrameEnum | None':
         return first([i for i in TimeFrames if i.value.mt5_value == mt5_value], default=None)
 
     @classmethod
-    @lru_cache
     def get_time_frame_by_name(self, name: str) -> 'TimeFrameEnum | None':
         return first([i for i in TimeFrames if i.value.name == name], default=None)
 
+    @classmethod
+    def get_time_frame_names(cls):
+        return [i.value.name for i in cls]
+
+
 class Symbols(Enum):
-    EURUSD = Symbol("EUR","USD",suffix="b")
+    eur_usd = Symbol("EUR","USD",0.0001,suffix="b")
+
+    @classmethod
+    def get_symbol_by_name(cls, symbol_name : str):
+        return first((i.value for i in cls if i.value.symbol_name == symbol_name))
+
+    @classmethod
+    def get_symbols_name(cls):
+        return [i.value.symbol_name for i in cls]
