@@ -7,9 +7,34 @@ if not "trade_vm" in st.session_state:
 
 st.set_page_config(layout="wide")
 
-cols = st.columns(2)
+cols = st.columns([1.5,2,2,0.5,3.5])
 
 with cols[0]:
+    st.selectbox("Select Time Frame", [None] + state.trade_vm.get_time_frames(), key = "pattern_tf")
+    st.selectbox(
+        "Select Currency",
+        [None] + state.trade_vm.get_symbols(),
+        key="currency_pattern",
+        on_change=lambda: state.trade_vm.set_currency(
+            state.currency_select
+        )
+    )
+
+    if st.button("add Pattern"):
+        pass
+
+with cols[1]:
+    st.date_input("Pattern Start Date")
+    st.time_input("Pattern Start Time")
+
+with cols[2]:
+    st.date_input("Pattern End Date")
+    st.time_input("Pattern End Time")
+
+with cols[3]:
+    pass
+
+with cols[4]:
     st.text_input(
         "Risk Percentage %",
         disabled=True,
@@ -19,7 +44,6 @@ with cols[0]:
             state.risk_percentage_input
         ))
 
-with cols[1]:
     st.text_input(
         "Volume Size $",
         value=state.trade_vm.balance,
@@ -28,6 +52,8 @@ with cols[1]:
         on_change=lambda: state.trade_vm.set_balance(
             state.volume_size_input
         ))
+
+st.markdown("---")
 
 cols = st.columns(3)
 
