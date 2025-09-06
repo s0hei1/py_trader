@@ -1,5 +1,7 @@
 import streamlit as st
 from streamlit import session_state as state
+
+from src.ui.shared_views.shared_views import show_result
 from src.ui.viewmodel.trade_vm import TradeVM
 
 if not "trade_vm" in st.session_state:
@@ -7,34 +9,65 @@ if not "trade_vm" in st.session_state:
 
 st.set_page_config(layout="wide")
 
-cols = st.columns([1.5,2,2,0.5,3.5])
+cols = st.columns([1.5, 2, 2, 0.5, 3.5])
 
 with cols[0]:
-    st.selectbox("Select Time Frame", [None] + state.trade_vm.get_time_frames(), key = "pattern_tf")
+    st.selectbox(
+        "Select Time Frame",
+        [None] + state.trade_vm.get_time_frames(),
+        key="pattern_tf_selection",
+        on_change=lambda: state.trade_vm.set_pattern_time_frame(
+            state.pattern_tf_selection
+        )
+
+    )
+
     st.selectbox(
         "Select Currency",
         [None] + state.trade_vm.get_symbols(),
-        key="currency_pattern",
-        on_change=lambda: state.trade_vm.set_currency(
-            state.currency_select
+        key="pattern_symbol_selection",
+        on_change=lambda: state.trade_vm.set_pattern_symbol(
+            state.pattern_symbol_selection
         )
     )
 
-    if st.button("add Pattern"):
-        pass
-
 with cols[1]:
-    st.date_input("Pattern Start Date")
-    st.time_input("Pattern Start Time")
+    st.date_input(
+        "Pattern Start Date",
+        key="pattern_start_date_input",
+        on_change=lambda: state.trade_vm.set_pattern_start_date(
+            state.pattern_start_date_input
+        )
+    )
+    st.time_input(
+        "Pattern Start Time",
+        key="pattern_start_time_input",
+        on_change=lambda: state.trade_vm.set_pattern_start_time(
+            state.pattern_start_time_input
+        )
+    )
 
 with cols[2]:
-    st.date_input("Pattern End Date")
-    st.time_input("Pattern End Time")
+    st.date_input(
+        "Pattern End Date",
+        key="pattern_end_date_input",
+        on_change=lambda: state.trade_vm.set_pattern_end_date(
+            state.pattern_end_date_input
+        )
+    )
+    st.time_input(
+        "Pattern End Time",
+        key="pattern_end_time_input",
+        on_change=lambda: state.trade_vm.set_pattern_end_time(
+            state.pattern_end_time_input
+        )
+    )
 
 with cols[3]:
     pass
 
 with cols[4]:
+    """Config"""
     st.text_input(
         "Risk Percentage %",
         disabled=True,
@@ -52,6 +85,10 @@ with cols[4]:
         on_change=lambda: state.trade_vm.set_balance(
             state.volume_size_input
         ))
+
+if st.button("Add Pattern"):
+    result = state.trade_vm.add_pattern()
+    show_result(result)
 
 st.markdown("---")
 
@@ -115,4 +152,3 @@ if st.button("Place Order"):
         st.error(set_order_result.message)
     if not set_order_result.has_error:
         st.success(set_order_result.message)
-

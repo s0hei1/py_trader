@@ -1,8 +1,14 @@
+from src.data.core.models import Pattern
+from src.data.repo.pattern_repo import PatternRepo
+from src.tools.di.container import Container
+from src.ui.viewmodel.vm_result import VMResult
 from third_party.candlestic.enums import Symbols, TimeFrames
 from third_party.mt5_overhead import set_pending_order
 from third_party.mt5_overhead import OrderTypes
 from third_party.mt5_overhead.mt5_result import Mt5Result
 import MetaTrader5 as mt5
+from datetime import date,time,datetime
+
 
 class TradeVM:
     _risk_percentage: float = 1
@@ -13,6 +19,16 @@ class TradeVM:
     _sl: int = 0
     _tp: int = 0
     _order_type: str
+
+    _pattern_time_frame: str
+    _pattern_symbol: str
+    _pattern_start_date: date
+    _pattern_end_date: date
+    _pattern_start_time: time
+    _pattern_end_time: time
+
+    def __init__(self, pattern_repo: PatternRepo = Container.pattern_repo()):
+        self.pattern_repo = pattern_repo
 
     @property
     def balance(self):
@@ -46,6 +62,30 @@ class TradeVM:
     def order_type(self):
         return self._order_type
 
+    @property
+    def pattern_time_frame(self):
+        return self._pattern_time_frame
+
+    @property
+    def pattern_symbol(self):
+        return self._pattern_symbol
+
+    @property
+    def pattern_start_date(self):
+        return self._pattern_start_date
+
+    @property
+    def pattern_end_date(self):
+        return self._pattern_end_date
+
+    @property
+    def pattern_start_time(self):
+        return self._pattern_start_time
+
+    @property
+    def pattern_end_time(self):
+        return self._pattern_end_time
+
     def set_risk_percentage(self, new_value: str | float):
         self._risk_percentage = float(new_value)
 
@@ -69,6 +109,25 @@ class TradeVM:
 
     def set_order_type(self, new_value: str):
         self._order_type = new_value
+
+    def set_pattern_time_frame(self, new_value: str):
+        self._pattern_time_frame = new_value
+
+    def set_pattern_symbol(self, new_value: str):
+        self._pattern_symbol = new_value
+
+    def set_pattern_start_date(self, new_value : date):
+        print("start date is ", new_value)
+        self._pattern_start_date = new_value
+
+    def set_pattern_end_date(self, new_value : date):
+        self._pattern_end_date = new_value
+
+    def set_pattern_start_time(self, new_value : time):
+        self._pattern_start_time = new_value
+
+    def set_pattern_end_time(self, new_value : time):
+        self._pattern_end_time = new_value
 
     def calculate_volume(self):
         risk_amount = self.balance * (self.risk_percentage / 100)
@@ -94,8 +153,8 @@ class TradeVM:
         sl_price = self.entry_price - sl_value if order_type.is_buy() else self.entry_price + sl_value
         tp_price = self.entry_price + tp_value if order_type.is_buy() else self.entry_price - tp_value
 
-        sl_price = round(sl_price,5)
-        tp_price = round(tp_price,5)
+        sl_price = round(sl_price, 5)
+        tp_price = round(tp_price, 5)
 
         result = set_pending_order(
             order_type=order_type,
@@ -116,3 +175,20 @@ class TradeVM:
 
     def get_time_frames(self) -> list[str]:
         return TimeFrames.get_time_frame_names()
+
+    def add_pattern(self) -> VMResult:
+        try:
+            pattern = self.pattern_repo.add_pattern(
+                Pattern(
+                    pattern_start_date_time= datetime.combine(self._pattern_start_date, self._pattern_end_time),
+                    pattern_end_date_time= datetime.combine(self._pattern_end_date, self._pattern_end_time),
+                    pattern_time_frame= self._pattern_time_frame,
+                    symbol_name= self._pattern_symbol,
+                )
+            )
+            if pattern is not None:
+                return VMResult(message=f"Pattern Added Successful \n{pattern.__dict__}")
+            else:
+                raise Exception("an exception occured while pattern adding")
+        except Exception as e:
+            return VMResult(has_error=True, message=str(e))

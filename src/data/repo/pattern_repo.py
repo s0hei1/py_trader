@@ -37,7 +37,7 @@ class PatternRepo:
 
         return result
 
-    def add_pattern(self, pattern: Pattern):
+    def add_pattern(self, pattern: Pattern) -> Pattern:
 
         q = select(
             exists().where(
