@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit import session_state as state
 
-from src.ui.shared_views.shared_views import show_result
+from src.ui.shared_views.show_result import show_result
 from src.ui.viewmodel.trade_vm import TradeVM
 
 if not "trade_vm" in st.session_state:

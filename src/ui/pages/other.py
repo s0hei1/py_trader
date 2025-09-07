@@ -11,6 +11,69 @@ from st_aggrid import AgGrid, GridOptionsBuilder
 
 
 
+import streamlit as st
+import plotly.express as px
+import pandas as pd
+import numpy as np
+
+# -----------------------------
+# Generate some sample data
+# -----------------------------
+np.random.seed(42)
+dates = pd.date_range("2025-01-01", periods=100)
+sales = np.random.randint(50, 200, size=100)
+profit = np.random.randint(10, 100, size=100)
+region = np.random.choice(["North", "South", "East", "West"], size=100)
+
+df = pd.DataFrame({
+    "Date": dates,
+    "Sales": sales,
+    "Profit": profit,
+    "Region": region
+})
+
+# -----------------------------
+# Dashboard Layout
+# -----------------------------
+st.set_page_config(page_title="Business Dashboard", layout="wide")
+
+st.title("📊 Business Dashboard")
+
+# KPI values
+total_sales = df["Sales"].sum()
+avg_profit = df["Profit"].mean()
+max_sales_day = df.loc[df["Sales"].idxmax(), "Date"].strftime("%Y-%m-%d")
+
+col1, col2, col3 = st.columns(3)
+col1.metric("Total Sales", f"${total_sales:,}")
+col2.metric("Average Profit", f"${avg_profit:.2f}")
+col3.metric("Best Sales Day", max_sales_day)
+
+st.markdown("---")
+
+# -----------------------------
+# Charts
+# -----------------------------
+
+# Sales over time
+fig_sales = px.line(df, x="Date", y="Sales", title="Sales Over Time")
+st.plotly_chart(fig_sales, use_container_width=True)
+
+# Profit by region
+fig_profit = px.bar(
+    df.groupby("Region", as_index=False)["Profit"].mean(),
+    x="Region", y="Profit",
+    title="Average Profit by Region"
+)
+st.plotly_chart(fig_profit, use_container_width=True)
+
+# Scatter plot of sales vs profit
+fig_scatter = px.scatter(df, x="Sales", y="Profit", color="Region",
+                         size="Profit", hover_data=["Date"],
+                         title="Sales vs Profit by Region")
+st.plotly_chart(fig_scatter, use_container_width=True)
+
+
 with st.form(key="my_form"):
     name = st.text_input("Name")
     age = st.number_input("Age")
