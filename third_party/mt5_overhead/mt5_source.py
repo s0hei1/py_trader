@@ -13,6 +13,7 @@ from third_party.mt5_overhead.ordertype import OrderType
 P = ParamSpec("P")
 T = TypeVar("T")
 
+
 def mt5_last_error() -> LastErrorResult:
     lasterror = mt5.last_error()
     return LastErrorResult(
@@ -20,7 +21,8 @@ def mt5_last_error() -> LastErrorResult:
         result_code=lasterror[0]
     )
 
-def _mt5_initialize(func: Callable[P, Mt5Result[T | None]]) -> Callable[... , Mt5Result[T | None]]:
+
+def _mt5_initialize(func: Callable[P, Mt5Result[T | None]]) -> Callable[..., Mt5Result[T | None]]:
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> Mt5Result[T | None]:
         init_result = mt5.initialize()
         if not init_result:
@@ -110,11 +112,12 @@ def get_symbol_current_price(symbol: Symbol) -> Mt5Result[float]:
         result=last_tick_result
     )
 
+
 @_mt5_initialize
 def set_pending_order(
-        order_type : OrderType,
+        order_type: OrderType,
         symbol: Symbol,
-        volume : float,
+        volume: float,
         entry_price: float,
         stop_loss: float,
         take_profit: float,
@@ -134,7 +137,7 @@ def set_pending_order(
         "type_filling": mt5.ORDER_FILLING_RETURN,
     }
 
-    order_send_result : mt5.OrderSendResult = mt5.order_send(request)
+    order_send_result: mt5.OrderSendResult = mt5.order_send(request)
 
     if order_send_result.retcode != 10009:
         return Mt5Result(
@@ -147,7 +150,27 @@ def set_pending_order(
     lasterror = mt5_last_error()
     return Mt5Result(
         has_error=lasterror.result_code != 1,
-        message = lasterror.message,
-        result_code = lasterror.result_code,
-        result = order_send_result,
+        message=lasterror.message,
+        result_code=lasterror.result_code,
+        result=order_send_result,
     )
+
+
+@_mt5_initialize
+def get_account_info() -> Mt5Result[mt5.AccountInfo]:
+    info = mt5.account_info()
+
+    lasterror = mt5_last_error()
+    return Mt5Result(
+        has_error=lasterror.result_code != 1,
+        message=lasterror.message,
+        result_code=lasterror.result_code,
+        result=info,
+    )
+
+
+@_mt5_initialize
+def get_orders():
+    orders = mt5.orders_get()
+    print(orders)
+
