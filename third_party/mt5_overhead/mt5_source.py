@@ -40,7 +40,7 @@ def _mt5_initialize(func: Callable[P, Mt5Result[T | None]]) -> Callable[..., Mt5
             _last_error = mt5_last_error()
             return Mt5Result(
                 has_error=True,
-                message=_last_error.message,
+                message=f" mt5 msg :{_last_error.message} , exception : {str(e)}",
                 result_code=_last_error.result_code,
                 result=None,
             )
@@ -170,7 +170,36 @@ def get_account_info() -> Mt5Result[mt5.AccountInfo]:
 
 
 @_mt5_initialize
-def get_orders():
+def get_orders() -> Mt5Result[list[mt5.TradeOrder]]:
     orders = mt5.orders_get()
-    print(orders)
+
+    lasterror = mt5_last_error()
+
+    orders= list(orders)
+
+    return Mt5Result(
+        has_error= lasterror.result_code != 1,
+        result_code=lasterror.result_code,
+        message=lasterror.message,
+        result= orders
+    )
+
+
+
+@_mt5_initialize
+def get_positions() -> Mt5Result[list[mt5.TradePosition]]:
+    positions = mt5.positions_get()
+
+    lasterror = mt5_last_error()
+
+    positions = list(positions)
+
+    return Mt5Result(
+        has_error= lasterror.result_code != 1,
+        result_code=lasterror.result_code,
+        message=lasterror.message,
+        result= positions
+    )
+
+
 

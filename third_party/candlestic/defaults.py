@@ -6,7 +6,7 @@ from more_itertools import first
 from third_party.candlestic.symbol import Symbol
 from third_party.candlestic.time_frame import TimeFrame
 
-class TimeFrames(Enum):
+class DefaultTimeFrames(Enum):
     M1 = TimeFrame(name="m1", mt5_value=mt5.TIMEFRAME_M1, included_m1=1)
     M5 = TimeFrame(name="m5", mt5_value=mt5.TIMEFRAME_M5, included_m1=5)
     M15 = TimeFrame(name="m15", mt5_value=mt5.TIMEFRAME_M15, included_m1=15)
@@ -18,18 +18,18 @@ class TimeFrames(Enum):
 
     @classmethod
     def get_time_frame_by_mt5_value(cls, mt5_value: int) -> 'TimeFrameEnum | None':
-        return first([i for i in TimeFrames if i.value.mt5_value == mt5_value], default=None)
+        return first([i for i in DefaultTimeFrames if i.value.mt5_value == mt5_value], default=None)
 
     @classmethod
     def get_time_frame_by_name(self, name: str) -> 'TimeFrameEnum | None':
-        return first([i for i in TimeFrames if i.value.name == name], default=None)
+        return first([i for i in DefaultTimeFrames if i.value.name == name], default=None)
 
     @classmethod
     def get_time_frame_names(cls):
         return [i.value.name for i in cls]
 
 
-class Symbols(Enum):
+class DefaultSymbols(Enum):
     eur_usd = Symbol("EUR","USD",0.0001,suffix="b")
 
     @classmethod
