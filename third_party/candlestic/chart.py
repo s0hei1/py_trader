@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from typing import Sequence
 import csv
 from datetime import datetime
-import pandas as pd
 from third_party.candlestic.candle import Candle
 import pandas as pd
 
