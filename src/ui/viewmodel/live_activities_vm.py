@@ -30,6 +30,8 @@ class LiveActivitiesVM():
         orders = mt5_source.get_orders()
         positions = mt5_source.get_positions()
 
+        print(orders.result)
+
         self._account_info = info.result if not info.has_error else None
         self._orders = orders.result if not orders.has_error else None
         self._positions = positions.result if not positions.has_error else None

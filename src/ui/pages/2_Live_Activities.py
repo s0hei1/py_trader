@@ -39,7 +39,6 @@ AgGrid(data= positions_df, height=120)
 st.markdown("---")
 
 
-
 if st.button("sync data"):
     state.live_activities_vm.fetch_data_from_mt5()
     st.rerun()

@@ -1,4 +1,4 @@
-from sqlalchemy import DateTime
+from sqlalchemy import DateTime, ForeignKey, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from datetime import datetime
 
@@ -13,6 +13,11 @@ class Flags(Base):
     total_balance : Mapped[float] = mapped_column(default=0.0)
 
 
+# class PatternType(Base):
+#     __tablename__ = 'pattern_type'
+#     id : Mapped[int] = mapped_column(primary_key=True)
+#     name : Mapped[str] = mapped_column(String(32))
+
 class Pattern(Base):
     __tablename__ = 'pattern'
 
@@ -21,4 +26,12 @@ class Pattern(Base):
     pattern_end_date_time : Mapped[datetime] = mapped_column(DateTime(timezone=True))
     pattern_time_frame : Mapped[str]
     symbol_name : Mapped[str]
+
+class PlaceOrder(Base):
+    __tablename__ = 'pattern_trading'
+
+    id : Mapped[int] = mapped_column(primary_key=True)
+    order_code : Mapped[str] = mapped_column(unique=True)
+    order_ticket : Mapped[int]
+    pattern_id : Mapped[int] = mapped_column(ForeignKey('pattern.id'))
 

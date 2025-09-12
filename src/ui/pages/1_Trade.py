@@ -1,4 +1,5 @@
 import streamlit as st
+from st_aggrid import AgGrid, GridOptionsBuilder
 from streamlit import session_state as state
 
 from src.ui.shared_views.show_result import show_result
@@ -92,6 +93,17 @@ if st.button("Add Pattern"):
 
 st.markdown("---")
 
+cols = st.columns([3,1])
+
+with cols[0]:
+
+    # grid_options = GridOptionsBuilder.from_dataframe()
+
+    AgGrid(
+        state.trade_vm.patterns_df,
+        height=120
+    )
+
 cols = st.columns(3)
 
 with cols[0]:
@@ -109,15 +121,26 @@ with cols[1]:
 
 with cols[2]:
     st.selectbox(
-        "Select Currency",
+        "Select Order Type",
         [None] + state.trade_vm.get_order_types(),
-        key="order_select",
+        key="order_type_select",
         on_change=lambda: state.trade_vm.set_order_type(
-            state.order_select
+            state.order_type_select
         )
     )
 
-cols = st.columns(3)
+# with cols[3]:
+#     st.selectbox(
+#         "Select Order Type",
+#         [None] + state.trade_vm.get_order_types(),
+#         key="order_type_select",
+#         on_change=lambda: state.trade_vm.set_order_type(
+#             state.order_type_select
+#         )
+#     )
+
+
+
 
 with cols[0]:
     st.text_input(
@@ -145,6 +168,7 @@ with cols[2]:
         on_change=lambda: state.trade_vm.set_tp(
             state.tp_input
         ))
+
 
 if st.button("Place Order"):
     set_order_result = state.trade_vm.set_order()
