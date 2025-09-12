@@ -3,7 +3,7 @@ from typing import Sequence
 from sqlalchemy import select, exists
 from sqlalchemy.orm import Session
 import datetime as dt
-
+import pandas as pd
 from src.data.core.models import Pattern
 
 
@@ -58,3 +58,25 @@ class PatternRepo:
         self.session.refresh(pattern)
 
         return pattern
+
+    def get_patterns(self) -> Sequence[Pattern]:
+
+        q = select(Pattern)
+
+        result = self.session.execute(q).scalars().all()
+
+        return result
+
+    def get_patterns_df(self) -> pd.DataFrame:
+        q = select(
+            Pattern.id,
+            Pattern.symbol_name,
+            Pattern.pattern_time_frame,
+            Pattern.pattern_start_date_time,
+            Pattern.pattern_end_date_time
+        )
+
+        df = pd.read_sql(q, self.session.get_bind())
+
+        return df
+

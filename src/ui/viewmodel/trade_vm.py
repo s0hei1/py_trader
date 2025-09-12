@@ -2,13 +2,13 @@ from src.data.core.models import Pattern
 from src.data.repo.pattern_repo import PatternRepo
 from src.tools.di.container import Container
 from src.ui.viewmodel.vm_result import VMResult
-from third_party.candlestic.enums import Symbols, TimeFrames
+from third_party.candlestic.defaults import DefaultSymbols, DefaultTimeFrames
 from third_party.mt5_overhead import set_pending_order
 from third_party.mt5_overhead import OrderTypes
 from third_party.mt5_overhead.mt5_result import Mt5Result
 import MetaTrader5 as mt5
 from datetime import date,time,datetime
-
+import pandas as pd
 
 class TradeVM:
     _risk_percentage: float = 1
@@ -27,8 +27,11 @@ class TradeVM:
     _pattern_start_time: time
     _pattern_end_time: time
 
+    _patterns_df : pd.DataFrame
+
     def __init__(self, pattern_repo: PatternRepo = Container.pattern_repo()):
         self.pattern_repo = pattern_repo
+        self._set_patterns_df()
 
     @property
     def balance(self):
@@ -86,6 +89,10 @@ class TradeVM:
     def pattern_end_time(self):
         return self._pattern_end_time
 
+    @property
+    def patterns_df(self):
+        return self._patterns_df
+
     def set_risk_percentage(self, new_value: str | float):
         self._risk_percentage = float(new_value)
 
@@ -141,9 +148,12 @@ class TradeVM:
 
         return round(lot_size, 2)
 
+    def _set_patterns_df(self):
+        self._patterns_df = self.pattern_repo.get_patterns_df()
+
     def set_order(self) -> Mt5Result[mt5.OrderSendResult]:
         lot_size = self.calculate_volume()
-        symbol = Symbols.get_symbol_by_name(self.currency)
+        symbol = DefaultSymbols.get_symbol_by_name(self.currency)
 
         order_type = OrderTypes.get_type_by_name(self.order_type)
 
@@ -171,10 +181,10 @@ class TradeVM:
         return OrderTypes.get_type_names()
 
     def get_symbols(self) -> list[str]:
-        return Symbols.get_symbols_name()
+        return DefaultSymbols.get_symbols_name()
 
     def get_time_frames(self) -> list[str]:
-        return TimeFrames.get_time_frame_names()
+        return DefaultTimeFrames.get_time_frame_names()
 
     def add_pattern(self) -> VMResult:
         try:
@@ -187,6 +197,7 @@ class TradeVM:
                 )
             )
             if pattern is not None:
+                self._set_patterns_df()
                 return VMResult(message=f"Pattern Added Successful \n{pattern.__dict__}")
             else:
                 raise Exception("an exception occured while pattern adding")
