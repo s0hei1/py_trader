@@ -166,6 +166,8 @@ class TradeVM:
         sl_price = round(sl_price, 5)
         tp_price = round(tp_price, 5)
 
+
+
         result = set_pending_order(
             order_type=order_type,
             symbol=symbol,

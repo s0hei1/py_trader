@@ -1,7 +1,6 @@
 import streamlit as st
-from st_aggrid import AgGrid, GridOptionsBuilder
+from st_aggrid import AgGrid
 from streamlit import session_state as state
-
 from src.ui.shared_views.show_result import show_result
 from src.ui.viewmodel.trade_vm import TradeVM
 

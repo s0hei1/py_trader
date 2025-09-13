@@ -121,6 +121,7 @@ def set_pending_order(
         entry_price: float,
         stop_loss: float,
         take_profit: float,
+        external_id : str,
 ) -> Mt5Result[mt5.OrderSendResult]:
     request = {
         "action": mt5.TRADE_ACTION_PENDING,
@@ -135,6 +136,7 @@ def set_pending_order(
         "comment": "from python",
         "type_time": mt5.ORDER_TIME_GTC,
         "type_filling": mt5.ORDER_FILLING_RETURN,
+        "external_id": external_id
     }
 
     order_send_result: mt5.OrderSendResult = mt5.order_send(request)
