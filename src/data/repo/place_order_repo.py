@@ -1,21 +1,16 @@
 from sqlalchemy import select,func
 from sqlalchemy.orm import Session
-
 from src.data.core.models import PlaceOrder
 
-
 class PlaceOrderRepo:
-
-
 
     def __init__(self, session : Session):
         self.session = session
 
-
-
-    def create(self, place_order : PlaceOrder):
-        pass
-
+    def create(self, place_order : PlaceOrder) -> PlaceOrder:
+        self.session.add(place_order)
+        self.session.refresh(place_order)
+        return place_order
 
     def generate_place_order_code(self) -> str | None:
 

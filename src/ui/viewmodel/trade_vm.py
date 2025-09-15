@@ -1,4 +1,4 @@
-from src.data.core.models import Pattern
+from src.data.core.models import Pattern, PlaceOrder
 from src.data.repo.pattern_repo import PatternRepo
 from src.tools.di.container import Container
 from src.ui.viewmodel.vm_result import VMResult
@@ -10,7 +10,7 @@ import MetaTrader5 as mt5
 from datetime import date,time,datetime
 import pandas as pd
 
-class TradeVM:
+class PatternTradingVM:
     _risk_percentage: float = 1
     _balance: float = 1000
     _currency: str
@@ -28,10 +28,14 @@ class TradeVM:
     _pattern_end_time: time
 
     _patterns_df : pd.DataFrame
+    _selected_pattern : int | None = None
 
-    def __init__(self, pattern_repo: PatternRepo = Container.pattern_repo()):
+    def __init__(self,
+                 pattern_repo: PatternRepo = Container.pattern_repo(),
+                 place_order_repo = Container.place_order_repo()):
         self.pattern_repo = pattern_repo
         self._set_patterns_df()
+        self.place_order_repo = place_order_repo
 
     @property
     def balance(self):
@@ -93,6 +97,10 @@ class TradeVM:
     def patterns_df(self):
         return self._patterns_df
 
+    @property
+    def selected_pattern(self):
+        return self._selected_pattern
+
     def set_risk_percentage(self, new_value: str | float):
         self._risk_percentage = float(new_value)
 
@@ -136,6 +144,9 @@ class TradeVM:
     def set_pattern_end_time(self, new_value : time):
         self._pattern_end_time = new_value
 
+    def set_selected_pattern(self, selected_pattern_id: int | None):
+        self._selected_pattern = selected_pattern_id
+
     def calculate_volume(self):
         risk_amount = self.balance * (self.risk_percentage / 100)
 
@@ -152,6 +163,10 @@ class TradeVM:
         self._patterns_df = self.pattern_repo.get_patterns_df()
 
     def set_order(self) -> Mt5Result[mt5.OrderSendResult]:
+
+        if self.selected_pattern is None:
+            raise Exception("select a pattern For Trading !")
+
         lot_size = self.calculate_volume()
         symbol = DefaultSymbols.get_symbol_by_name(self.currency)
 
@@ -168,6 +183,9 @@ class TradeVM:
 
 
 
+        place_order = PlaceOrder()
+        generated_order_code = self.place_order_repo.generate_place_order_code()
+
         result = set_pending_order(
             order_type=order_type,
             symbol=symbol,
@@ -175,7 +193,13 @@ class TradeVM:
             entry_price=self.entry_price,
             stop_loss=sl_price,
             take_profit=tp_price,
+            external_id = generated_order_code
         )
+        place_order.order_code = generated_order_code
+        place_order.pattern_id = self.selected_pattern
+        place_order.order_ticket = result.result.ticket
+
+        self.place_order_repo.create(place_order)
 
         return result
 
@@ -205,3 +229,4 @@ class TradeVM:
                 raise Exception("an exception occured while pattern adding")
         except Exception as e:
             return VMResult(has_error=True, message=str(e))
+

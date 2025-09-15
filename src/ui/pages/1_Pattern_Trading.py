@@ -1,11 +1,11 @@
 import streamlit as st
-from st_aggrid import AgGrid
+from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode
 from streamlit import session_state as state
 from src.ui.shared_views.show_result import show_result
-from src.ui.viewmodel.trade_vm import TradeVM
+from src.ui.viewmodel.trade_vm import PatternTradingVM
 
 if not "trade_vm" in st.session_state:
-    state.trade_vm = TradeVM()
+    state.trade_vm = PatternTradingVM()
 
 st.set_page_config(layout="wide")
 
@@ -95,13 +95,25 @@ st.markdown("---")
 cols = st.columns([3,1])
 
 with cols[0]:
+    grid_options = GridOptionsBuilder.from_dataframe(state.trade_vm.patterns_df,)
+    grid_options.configure_selection(use_checkbox=True)
+    grid_options = grid_options.build()
 
-    # grid_options = GridOptionsBuilder.from_dataframe()
-
-    AgGrid(
+    response = AgGrid(
         state.trade_vm.patterns_df,
-        height=120
+        gridOptions=grid_options,
+        height=120,
+        update_mode=GridUpdateMode.MODEL_CHANGED,
+        theme="streamlit",
+        enable_enterprise_modules=True,
+
     )
+
+    if response.selected_rows is not None:
+        state.trade_vm.set_selected_pattern(response.selected_rows.iloc[0]['id'])
+    else:
+        state.trade_vm.set_selected_pattern(None)
+
 
 cols = st.columns(3)
 
