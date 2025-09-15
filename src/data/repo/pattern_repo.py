@@ -76,7 +76,9 @@ class PatternRepo:
             Pattern.pattern_end_date_time
         )
 
-        df = pd.read_sql(q, self.session.get_bind())
+        result = self.session.execute(q)
+
+        df = pd.DataFrame(result, columns = [key for key in result.keys()])
 
         return df
 

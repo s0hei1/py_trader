@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from src.data.repo.flags_repo import FlagsRepo
 from src.data.repo.pattern_repo import PatternRepo
+from src.data.repo.place_order_repo import PlaceOrderRepo
 from src.tools.config.settings import Settings
 
 
@@ -22,3 +23,7 @@ class Container():
     @classmethod
     def pattern_repo(cls) -> PatternRepo:
         return PatternRepo(session=Container.get_session())
+
+    @classmethod
+    def place_order_repo(cls) -> PlaceOrderRepo:
+        return PlaceOrderRepo(session=Container.get_session())
