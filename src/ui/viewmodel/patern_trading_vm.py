@@ -145,7 +145,7 @@ class PatternTradingVM:
         self._pattern_end_time = new_value
 
     def set_selected_pattern(self, selected_pattern_id: int | None):
-        self._selected_pattern = selected_pattern_id
+        self._selected_pattern = int(selected_pattern_id) if selected_pattern_id is not None else None
 
     def calculate_volume(self):
         risk_amount = self.balance * (self.risk_percentage / 100)
@@ -195,9 +195,10 @@ class PatternTradingVM:
             take_profit=tp_price,
             external_id = generated_order_code
         )
+        print(result)
         place_order.order_code = generated_order_code
         place_order.pattern_id = self.selected_pattern
-        place_order.order_ticket = result.result.ticket
+        place_order.order_ticket = int(result.result.order)
 
         self.place_order_repo.create(place_order)
 
