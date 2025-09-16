@@ -2,7 +2,7 @@ import streamlit as st
 from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode
 from streamlit import session_state as state
 from src.ui.shared_views.show_result import show_result
-from src.ui.viewmodel.trade_vm import PatternTradingVM
+from src.ui.viewmodel.patern_trading_vm import PatternTradingVM
 
 if not "trade_vm" in st.session_state:
     state.trade_vm = PatternTradingVM()

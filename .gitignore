@@ -130,3 +130,4 @@ __marimo__/
 
 /.idea
 /src/tools/config/.env
+/playground

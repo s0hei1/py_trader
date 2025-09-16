@@ -136,7 +136,7 @@ def set_pending_order(
         "comment": "from python",
         "type_time": mt5.ORDER_TIME_GTC,
         "type_filling": mt5.ORDER_FILLING_RETURN,
-        "external_id": external_id
+        "retcode_external": external_id
     }
 
     order_send_result: mt5.OrderSendResult = mt5.order_send(request)

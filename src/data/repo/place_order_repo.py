@@ -9,6 +9,7 @@ class PlaceOrderRepo:
 
     def create(self, place_order : PlaceOrder) -> PlaceOrder:
         self.session.add(place_order)
+        self.session.commit()
         self.session.refresh(place_order)
         return place_order
 
