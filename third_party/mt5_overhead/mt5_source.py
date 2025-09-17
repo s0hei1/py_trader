@@ -18,7 +18,7 @@ def mt5_last_error() -> LastErrorResult:
     lasterror = mt5.last_error()
     return LastErrorResult(
         message=lasterror[1],
-        result_code=lasterror[0]
+        result_code=lasterror[0],
     )
 
 
@@ -204,4 +204,39 @@ def get_positions() -> Mt5Result[list[mt5.TradePosition]]:
     )
 
 
+@_mt5_initialize
+def get_deals_history(
+        from_date : dt.datetime = dt.datetime.now(dt.UTC) - dt.timedelta(days=365),
+        to_date : dt.datetime = dt.datetime.now(dt.UTC) + dt.timedelta(days=1)
+) -> Mt5Result[list[mt5.TradeDeal]]:
 
+    deals = mt5.history_deals_get( from_date, to_date)
+
+    lasterror = mt5_last_error()
+
+    return Mt5Result(
+        has_error= lasterror.result_code != 1,
+        result_code= lasterror.result_code,
+        message=lasterror.message,
+        result=list(deals)
+    )
+
+
+@_mt5_initialize
+def get_orders_history() -> Mt5Result[list[mt5.TradeOrder]]:
+    from_date = dt.datetime(2020, 1, 1)
+    to_date = dt.datetime(2030, 1, 1)
+
+    orders = mt5.history_orders_get(from_date, to_date)
+
+    lasterror = mt5_last_error()
+
+    return Mt5Result(
+        has_error=lasterror.result_code != 1,
+        result_code=lasterror.result_code,
+        message=lasterror.message,
+        result=list(orders)
+    )
+
+
+print()
