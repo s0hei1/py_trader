@@ -1,6 +1,15 @@
 import streamlit as st
+from st_aggrid import AgGrid
+from streamlit import session_state as state
+from src.ui.viewmodel.trading_history_vm import TradingHistoryVM
 
-cols = st.columns(3)
+st.set_page_config(layout="wide")
 
-with cols[0]:
-    st.metric("Real Balance", f"100 $")
+if 'trading_history_vm' not in state:
+    state.trading_history_vm = TradingHistoryVM()
+
+response = AgGrid(
+    state.trading_history_vm.deals_history,
+    height=240,
+    theme="streamlit",
+)
