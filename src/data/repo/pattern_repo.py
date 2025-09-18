@@ -59,11 +59,14 @@ class PatternRepo:
 
         return pattern
 
-    def get_patterns(self) -> Sequence[Pattern]:
+    def get_patterns(self, as_data_frame : bool | None = None) -> Sequence[Pattern] | pd.DataFrame:
 
         q = select(Pattern)
 
         result = self.session.execute(q).scalars().all()
+
+        if as_data_frame:
+            return pd.DataFrame([i.as_dict() for i in result])
 
         return result
 
