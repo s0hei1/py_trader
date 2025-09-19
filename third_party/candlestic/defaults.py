@@ -21,8 +21,8 @@ class DefaultTimeFrames(Enum):
         return first([i for i in DefaultTimeFrames if i.value.mt5_value == mt5_value], default=None)
 
     @classmethod
-    def get_time_frame_by_name(self, name: str) -> 'TimeFrameEnum | None':
-        return first([i for i in DefaultTimeFrames if i.value.name == name], default=None)
+    def get_time_frame_by_name(self, name: str) -> TimeFrame | None:
+        return first([i.value for i in DefaultTimeFrames if i.value.name == name] , default=None)
 
     @classmethod
     def get_time_frame_names(cls):
@@ -30,7 +30,7 @@ class DefaultTimeFrames(Enum):
 
 
 class DefaultSymbols(Enum):
-    eur_usd = Symbol("EUR","USD",0.0001,suffix="b")
+    eur_usd = Symbol("EUR","USD",0.0001)
 
     @classmethod
     def get_symbol_by_name(cls, symbol_name : str):

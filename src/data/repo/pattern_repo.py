@@ -1,5 +1,4 @@
 from typing import Sequence
-
 from sqlalchemy import select, exists
 from sqlalchemy.orm import Session
 import datetime as dt
@@ -18,6 +17,7 @@ class PatternRepo:
                                pattern_end_date_time: dt.datetime = None,
                                pattern_time_frame: str = None,
                                symbol_name: str = None,
+                               return_first : bool = False
                                ) -> Sequence[Pattern]:
 
         q = select(Pattern)
@@ -35,7 +35,9 @@ class PatternRepo:
 
         result = self.session.execute(q).scalars().all()
 
+
         return result
+
 
     def add_pattern(self, pattern: Pattern) -> Pattern:
 
