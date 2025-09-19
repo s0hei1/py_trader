@@ -27,6 +27,10 @@ class Pattern(Base):
     pattern_time_frame : Mapped[str]
     symbol_name : Mapped[str]
 
+    def as_dict(self):
+        return {col.name: getattr(self, col.name) for col in self.__table__.columns}
+
+
 class PlaceOrder(Base):
     __tablename__ = 'pattern_trading'
 
@@ -34,4 +38,3 @@ class PlaceOrder(Base):
     order_code : Mapped[str] = mapped_column(unique=True)
     order_ticket : Mapped[int]
     pattern_id : Mapped[int] = mapped_column(ForeignKey('pattern.id'))
-
