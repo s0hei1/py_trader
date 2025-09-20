@@ -20,8 +20,6 @@ from alembic import context
 
 config = context.config
 
-print('d is ',Container.settings().database_url_without_psycopg2)
-
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
