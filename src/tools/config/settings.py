@@ -10,4 +10,4 @@ class Settings(BaseSettings):
 
 
     class Config:
-        env_file = r'C:\Users\m.rahimi\PycharmProjects\py_trader\src\tools\config\.env'
+        env_file = r'C:\Users\Soheil\PycharmProjects\py_trader\src\tools\config\.env'
