@@ -9,6 +9,7 @@ class PatternVM:
     _patterns_df: pd.DataFrame
 
     _selected_pattern: pd.DataFrame | None = None
+    _selected_pattern_trigger_time: pd.DataFrame | None = None
 
     def __init__(self):
         self.pattern_repo: PatternRepo = Container.pattern_repo()
@@ -27,13 +28,28 @@ class PatternVM:
         selected_symbol = DefaultSymbols.get_symbol_by_name(pattern.symbol_name)
         selected_timeframe = DefaultTimeFrames.get_time_frame_by_name(pattern.pattern_time_frame)
 
-        result = mt5_source.get_market_historical_data(
+        mt5_result = mt5_source.get_market_historical_data(
             symbol=selected_symbol,
             timeframe=selected_timeframe,
             date_from=pattern.pattern_start_date_time,
             date_to=pattern.pattern_end_date_time,
         )
-        self._selected_pattern = result.result.to_dataframe()
+        self._selected_pattern = mt5_result.result.to_dataframe()
+
+        print(len(mt5_result.result))
+
+
+        mt5_result_trigger_time = mt5_source.get_market_historical_data(
+            symbol=selected_symbol,
+            timeframe=DefaultTimeFrames.get_trigger_time(selected_timeframe),
+            date_from=pattern.pattern_start_date_time,
+            date_to=pattern.pattern_end_date_time,
+        )
+
+        print(len(mt5_result_trigger_time.result))
+
+        self._selected_pattern_trigger_time = mt5_result_trigger_time.result.to_dataframe()
+
 
     @property
     def patterns_df(self):
@@ -42,3 +58,7 @@ class PatternVM:
     @property
     def selected_pattern(self) -> pd.DataFrame:
         return self._selected_pattern
+
+    @property
+    def selected_pattern_trigger_time(self) -> pd.DataFrame:
+        return self._selected_pattern_trigger_time

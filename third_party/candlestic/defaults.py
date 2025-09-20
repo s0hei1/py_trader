@@ -1,5 +1,7 @@
 from enum import Enum
 from functools import lru_cache
+from typing import Optional
+
 import MetaTrader5 as mt5
 from more_itertools import first
 
@@ -27,6 +29,29 @@ class DefaultTimeFrames(Enum):
     @classmethod
     def get_time_frame_names(cls):
         return [i.value.name for i in cls]
+
+    @classmethod
+    def get_enum_by_time_frame_obj(cls, time_frame : TimeFrame) -> Optional['DefaultTimeFrames']:
+        return first([i for i in DefaultTimeFrames if i.value == time_frame], default=None)
+
+    @property
+    def trigger_time_dict(self) -> dict['DefaultTimeFrames','DefaultTimeFrames']:
+        return {
+            self.M15: self.M1,
+            self.H1: self.M5,
+            self.H4: self.M15,
+            self.Daily: self.H1,
+            self.Weekly: self.H4,
+            self.Monthly: self.Daily,
+        }
+
+
+
+    @classmethod
+    def get_trigger_time(cls, time_frame : TimeFrame) -> TimeFrame:
+        enum_obj = cls.get_enum_by_time_frame_obj(time_frame)
+        trigger_time_dict = enum_obj.trigger_time_dict
+        return (trigger_time_dict[enum_obj]).value
 
 
 class DefaultSymbols(Enum):

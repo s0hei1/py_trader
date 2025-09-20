@@ -21,6 +21,9 @@ class Chart:
     def __iter__(self):
         return iter(self.candles)
 
+    def __len__(self):
+        return len(self.candles)
+
     def add_indicator(self, indicator_name ,indicator):
         self._indicators[indicator_name] = indicator
 
