@@ -131,3 +131,4 @@ __marimo__/
 /.idea
 /src/tools/config/.env
 /playground
+/src/data/migrations/alembic/versions
