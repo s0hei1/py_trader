@@ -30,6 +30,14 @@ class Pattern(Base):
     def as_dict(self):
         return {col.name: getattr(self, col.name) for col in self.__table__.columns}
 
+    @classmethod
+    def get_columns_name(cls, exclude : list[str]):
+        result =  [col.name for col in cls.__table__.columns]
+
+        for ex in exclude:
+            result.remove(ex)
+
+        return result
 
 class PlaceOrder(Base):
     __tablename__ = 'pattern_trading'

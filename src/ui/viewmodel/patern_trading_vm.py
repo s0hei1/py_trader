@@ -215,7 +215,7 @@ class PatternTradingVM:
 
     def add_pattern(self) -> VMResult:
         try:
-            pattern = self.pattern_repo.add_pattern(
+            pattern = self.pattern_repo.create(
                 Pattern(
                     pattern_start_date_time= datetime.combine(self._pattern_start_date, self._pattern_end_time),
                     pattern_end_date_time= datetime.combine(self._pattern_end_date, self._pattern_end_time),

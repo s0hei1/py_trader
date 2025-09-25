@@ -54,7 +54,11 @@ def get_market_historical_data(
         timeframe: TimeFrame,
         date_from: dt.datetime,
         date_to: dt.datetime,
+        date_to_le : bool = False,
 ) -> Mt5Result[Chart | None]:
+
+    if date_to_le:
+        date_to = date_to + dt.timedelta(minutes=timeframe.included_m1)
 
     result = mt5.copy_rates_range(
         symbol.symbol_name,

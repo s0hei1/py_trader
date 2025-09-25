@@ -4,7 +4,7 @@ import pandas as pd
 from src.ui.viewmodel.vm_result import VMResult
 
 
-def show_result(result : VMResult):
+def ShowResult(result : VMResult):
     if result.has_error:
         st.error(result.message)
     else:
