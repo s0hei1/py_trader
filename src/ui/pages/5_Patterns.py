@@ -12,7 +12,7 @@ if 'patterns_vm' not in state:
 ag_grid_response = StaticAgGrid(df=state.patterns_vm.patterns_df,use_checkbox=True)
 
 if ag_grid_response.selected_rows is not None:
-    state.patterns_vm.set_selected_pattern(ag_grid_response.selected_rows['id'])
+    state.patterns_vm.set_selected_pattern(int(ag_grid_response.selected_rows['id']))
 
 if state.patterns_vm.selected_pattern is not None:
     cols = st.columns(2)

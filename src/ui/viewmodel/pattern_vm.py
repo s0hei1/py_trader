@@ -4,7 +4,7 @@ import pandas as pd
 from third_party import mt5_overhead as mt5_source
 from third_party.candlestic.defaults import DefaultSymbols, DefaultTimeFrames
 from more_itertools import first
-
+import datetime as dt
 class PatternVM:
     _patterns_df: pd.DataFrame
 
@@ -22,7 +22,7 @@ class PatternVM:
 
     def set_selected_pattern(self, selected_pattern_id: int):
         pattern = first(
-            self.pattern_repo.get_patterns_by_filter(id=selected_pattern_id)
+            self.pattern_repo.read_many(id=selected_pattern_id)
         )
 
         selected_symbol = DefaultSymbols.get_symbol_by_name(pattern.symbol_name)
@@ -33,17 +33,16 @@ class PatternVM:
             timeframe=selected_timeframe,
             date_from=pattern.pattern_start_date_time,
             date_to=pattern.pattern_end_date_time,
+            date_to_le = True,
         )
         self._selected_pattern = mt5_result.result.to_dataframe()
-
-        print(len(mt5_result.result))
 
 
         mt5_result_trigger_time = mt5_source.get_market_historical_data(
             symbol=selected_symbol,
             timeframe=DefaultTimeFrames.get_trigger_time(selected_timeframe),
             date_from=pattern.pattern_start_date_time,
-            date_to=pattern.pattern_end_date_time,
+            date_to=pattern.pattern_end_date_time + dt.timedelta(minutes=selected_timeframe.included_m1),
         )
 
         print(len(mt5_result_trigger_time.result))

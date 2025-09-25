@@ -11,27 +11,27 @@ class PatternRepo:
     def __init__(self, session: Session):
         self.session = session
 
-    def get_patterns_by_filter(self,
-                               id: int = None,
-                               pattern_start_date_time: dt.datetime = None,
-                               pattern_end_date_time: dt.datetime = None,
-                               pattern_time_frame: str = None,
-                               symbol_name: str = None,
-                               return_first : bool = False
-                               ) -> Sequence[Pattern]:
+    def read_many(self,
+                  id: int = None,
+                  pattern_start_date_time: dt.datetime = None,
+                  pattern_end_date_time: dt.datetime = None,
+                  pattern_time_frame: str = None,
+                  symbol_name: str = None,
+                  return_first : bool = False
+                  ) -> Sequence[Pattern]:
 
         q = select(Pattern)
 
         if id is not None:
-            q.where(Pattern.id == id)
+            q = q.where(Pattern.id == id)
         if pattern_start_date_time is not None:
-            q.where(Pattern.pattern_start_date_time == pattern_start_date_time)
+            q = q.where(Pattern.pattern_start_date_time == pattern_start_date_time)
         if pattern_end_date_time is not None:
-            q.where(Pattern.pattern_end_date_time == pattern_end_date_time)
+            q = q.where(Pattern.pattern_end_date_time == pattern_end_date_time)
         if pattern_time_frame is not None:
-            q.where(Pattern.pattern_time_frame == pattern_time_frame)
+            q = q.where(Pattern.pattern_time_frame == pattern_time_frame)
         if symbol_name is not None:
-            q.where(Pattern.symbol_name == symbol_name)
+            q = q.where(Pattern.symbol_name == symbol_name)
 
         result = self.session.execute(q).scalars().all()
 
@@ -39,7 +39,7 @@ class PatternRepo:
         return result
 
 
-    def add_pattern(self, pattern: Pattern) -> Pattern:
+    def create(self, pattern: Pattern) -> Pattern:
 
         q = select(
             exists().where(
@@ -60,6 +60,11 @@ class PatternRepo:
         self.session.refresh(pattern)
 
         return pattern
+
+    def create_many(self, patterns : list[Pattern]) -> list[Pattern]:
+        for i, pattern, in enumerate(patterns):
+            patterns[i] = self.create(pattern)
+        return patterns
 
     def get_patterns(self, as_data_frame : bool | None = None) -> Sequence[Pattern] | pd.DataFrame:
 
