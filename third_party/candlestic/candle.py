@@ -43,5 +43,6 @@ class Candle:
                 self.low == other.low and
                 self.close == other.close)
 
-
-
+    @classmethod
+    def get_annotations(cls):
+        return [i for i in Candle.__annotations__]

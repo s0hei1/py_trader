@@ -1,24 +1,48 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Sequence
+from functools import lru_cache
+from typing import Sequence, Any, Callable,TypeAlias
 import csv
 from datetime import datetime
 from third_party.candlestic.candle import Candle
 import pandas as pd
 import numpy as np
+from third_party.candlestic.indicator import Indicator
+from more_itertools import last
+
+OnChartUpdate : TypeAlias = Callable[[Sequence[Candle]], Any]
 
 @dataclass
 class Chart:
-    candles : Sequence[Candle]
-    time_frame : str | None = None
-    _indicators : dict | None = None
 
-    def __init__(self, candles : Sequence[Candle], time_frame : str | None = None):
+    candles : Sequence[Candle]
+    indicators_name : list[str]
+    time_frame : str | None = None
+    on_chart_update: OnChartUpdate | None = None
+
+    def __init__(self,
+                 candles : Sequence[Candle],
+                 time_frame : str | None = None,
+                 on_chart_update : OnChartUpdate | None = None):
         self.candles = candles
         self.time_frame = time_frame
+        self.indicators_name = []
+        self.on_chart_update = on_chart_update
 
-    def __getitem__(self, item):
-        return self.candles[item]
+    def __getitem__(self, col_name : str):
+
+        if col_name in Candle.get_annotations():
+            data = [getattr(i, col_name) for i in self.candles]
+            return np.array(data,dtype=float)
+
+
+        
+        if hasattr(self,col_name) and isinstance(getattr(self,col_name), Indicator):
+            indicator : Indicator = getattr(self,col_name)
+            return indicator.values
+            
+        
+        raise Exception("your provided col name is not exists")
 
     def __iter__(self):
         return iter(self.candles)
@@ -26,8 +50,15 @@ class Chart:
     def __len__(self):
         return len(self.candles)
 
-    def add_indicator(self, indicator_name ,indicator):
-        self._indicators[indicator_name] = indicator
+    def add_indicator(self, indicator : Indicator):
+
+        if len(indicator) != len(self.candles):
+            raise Exception("Length of indicator values must equal with Candles length")
+
+        if hasattr(self,indicator.name):
+            raise Exception(f"an indicator with name {indicator.name} is exists")
+
+        setattr(self,indicator.name, indicator.values)
 
     def to_dataframe(self):
 
@@ -86,3 +117,31 @@ class Chart:
             return (opens, closes, highs, lows, times)
 
         return data
+
+    def __setattr__(self, key, value):
+        if not hasattr(self, "indicators_name"):
+            super().__setattr__("indicators_name", [])
+
+        if isinstance(value, Indicator):
+            self.indicators_name.append(key)
+
+        super().__setattr__(key, value)
+
+    def __delattr__(self, key):
+        if hasattr(self, key) and isinstance(getattr(self, key), Indicator):
+            if key in self.indicators_name:
+                self.indicators_name.remove(key)
+
+        super().__delattr__(key)
+
+    def update_chart(self,new_candles : Sequence[Candle]):
+        candles = list(self.candles)
+
+        last_candle = last(candles)
+        new_candles_for_add = [i for i in new_candles if i.datetime > last_candle.datetime]
+
+        for candle in new_candles_for_add:
+            candles.append(candle)
+
+        self.candles = candles
+        self.on_chart_update(self.candles)
