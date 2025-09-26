@@ -1,0 +1,8 @@
+
+
+
+
+
+class BaseStrategy(object):
+    pass
+
