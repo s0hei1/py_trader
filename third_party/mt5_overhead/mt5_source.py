@@ -49,14 +49,13 @@ def _mt5_initialize(func: Callable[P, Mt5Result[T | None]]) -> Callable[..., Mt5
 
 
 @_mt5_initialize
-def get_market_historical_data(
+def get_historical_data(
         symbol: Symbol,
         timeframe: TimeFrame,
         date_from: dt.datetime,
         date_to: dt.datetime,
         date_to_le : bool = False,
 ) -> Mt5Result[Chart | None]:
-
     if date_to_le:
         date_to = date_to + dt.timedelta(minutes=timeframe.included_m1)
 
@@ -96,6 +95,50 @@ def get_market_historical_data(
         result=chart,
     )
 
+@_mt5_initialize
+def get_last_n_historical_data(
+        symbol: Symbol,
+        timeframe: TimeFrame,
+        n : int,
+) -> Mt5Result[Chart | None]:
+
+    result = mt5.copy_rates_from_pos(
+        symbol.symbol_name,
+        timeframe.mt5_value,
+        0,
+        n
+    )
+
+    _last_error = mt5.last_error()
+
+    if result is None and mt5.last_error()[0] != 1:
+        raise MetaTraderIOException(message=_last_error[1], code=_last_error[0], )
+
+    o = itemgetter(1)
+    h = itemgetter(2)
+    l = itemgetter(3)
+    c = itemgetter(4)
+    timestamp = itemgetter(0)
+
+    chart = Chart(
+        candles=[
+            Candle(
+                open=o(i),
+                high=h(i),
+                low=l(i),
+                close=c(i),
+                datetime=dt.datetime.fromtimestamp(timestamp(i), dt.UTC),
+            ) for i in result
+        ],
+        time_frame=timeframe.name
+    )
+
+    return Mt5Result(
+        has_error=False,
+        message=_last_error[0],
+        result_code=_last_error[1],
+        result=chart,
+    )
 
 @_mt5_initialize
 def get_symbol_current_price(symbol: Symbol) -> Mt5Result[float]:

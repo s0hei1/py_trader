@@ -95,6 +95,7 @@ st.markdown("---")
 cols = st.columns([3,1])
 
 with cols[0]:
+    st.write("Patterns")
     grid_options = GridOptionsBuilder.from_dataframe(state.trade_vm.patterns_df,)
     grid_options.configure_selection(use_checkbox=True)
     grid_options = grid_options.build()
@@ -102,7 +103,7 @@ with cols[0]:
     response = AgGrid(
         state.trade_vm.patterns_df,
         gridOptions=grid_options,
-        height=120,
+        height=170,
         update_mode=GridUpdateMode.MODEL_CHANGED,
         theme="streamlit",
         enable_enterprise_modules=True,
@@ -113,6 +114,10 @@ with cols[0]:
         state.trade_vm.set_selected_pattern(response.selected_rows.iloc[0]['id'])
     else:
         state.trade_vm.set_selected_pattern(None)
+
+with cols[1]:
+    st.write("ATR")
+    st.dataframe(state.trade_vm.ATRs)
 
 
 cols = st.columns(3)

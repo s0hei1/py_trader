@@ -2,13 +2,16 @@ from src.data.core.models import Pattern, PlaceOrder
 from src.data.repo.pattern_repo import PatternRepo
 from src.tools.di.container import Container
 from src.ui.viewmodel.vm_result import VMResult
-from third_party.candlestic.defaults import DefaultSymbols, DefaultTimeFrames
-from third_party.mt5_overhead import set_pending_order
+from third_party.candlestic import TimeFrame
+from third_party.candlestic.defaults import DefaultSymbols, ClassicFractalTimeFrames
+from third_party.mt5_overhead import set_pending_order,get_last_n_historical_data
 from third_party.mt5_overhead import OrderTypes
 from third_party.mt5_overhead.mt5_result import Mt5Result
 import MetaTrader5 as mt5
 from datetime import date,time,datetime
 import pandas as pd
+import talib
+
 
 class PatternTradingVM:
     _risk_percentage: float = 1
@@ -20,6 +23,7 @@ class PatternTradingVM:
     _tp: int = 0
     _order_type: str
 
+    _ATRs : dict[str, int] = {}
     _pattern_time_frame: str
     _pattern_symbol: str
     _pattern_start_date: date
@@ -36,6 +40,8 @@ class PatternTradingVM:
         self.pattern_repo = pattern_repo
         self._set_patterns_df()
         self.place_order_repo = place_order_repo
+
+        self._set_atr()
 
     @property
     def balance(self):
@@ -101,6 +107,10 @@ class PatternTradingVM:
     def selected_pattern(self):
         return self._selected_pattern
 
+    @property
+    def ATRs(self):
+        return self._ATRs
+
     def set_risk_percentage(self, new_value: str | float):
         self._risk_percentage = float(new_value)
 
@@ -147,6 +157,31 @@ class PatternTradingVM:
     def set_selected_pattern(self, selected_pattern_id: int | None):
         self._selected_pattern = int(selected_pattern_id) if selected_pattern_id is not None else None
 
+    def _set_atr(self):
+        for time_frame in ClassicFractalTimeFrames.get_time_frames():
+
+            symbol = DefaultSymbols.eur_usd
+            result = get_last_n_historical_data(
+                symbol = symbol,
+                timeframe = time_frame,
+                n = time_frame.fractal_value +1
+            )
+
+            if result.has_error:
+                continue
+
+
+            opens, closes, highs, lows, times = result.result.separate_ochl(to_ndarray=True)
+
+            atr_array = talib.ATR(
+                highs,
+                lows,
+                closes,
+                timeperiod = time_frame.fractal_value
+            )
+            atr = float(atr_array[-1])
+            self._ATRs[time_frame.name] = symbol.price_dif_to_pips(atr)
+
     def calculate_volume(self):
         risk_amount = self.balance * (self.risk_percentage / 100)
 
@@ -172,8 +207,8 @@ class PatternTradingVM:
 
         order_type = OrderTypes.get_type_by_name(self.order_type)
 
-        sl_value = self.sl * symbol.decimal_places
-        tp_value = self.sl * symbol.decimal_places
+        sl_value = self.sl * symbol.decimal_places_value
+        tp_value = self.sl * symbol.decimal_places_value
 
         sl_price = self.entry_price - sl_value if order_type.is_buy() else self.entry_price + sl_value
         tp_price = self.entry_price + tp_value if order_type.is_buy() else self.entry_price - tp_value
@@ -211,7 +246,7 @@ class PatternTradingVM:
         return DefaultSymbols.get_symbols_name()
 
     def get_time_frames(self) -> list[str]:
-        return DefaultTimeFrames.get_time_frame_names()
+        return ClassicFractalTimeFrames.get_time_frame_names()
 
     def add_pattern(self) -> VMResult:
         try:
