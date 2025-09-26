@@ -5,12 +5,13 @@ from dataclasses import dataclass
 class Symbol:
     base_currency: str
     quote_currency: str
-    decimal_places : float
+    decimal_places : int
+    decimal_places_value : float
     alias_names: dict[str,str] | None = None
     prefix: str = ''
     suffix: str = ''
 
-    def __init__(self, base_currency: str, quote_currency: str, decimal_places : float, /, alias_names: list[str] | None = None,
+    def __init__(self, base_currency: str, quote_currency: str, decimal_places : int, /, alias_names: list[str] | None = None,
                  prefix: str = '',
                  suffix: str = '',
                  ):
@@ -18,6 +19,7 @@ class Symbol:
         self.quote_currency = quote_currency
         self.alias_names = alias_names
         self.decimal_places = decimal_places
+        self.decimal_places_value = 1 / 10 ** decimal_places
         self.prefix = prefix
         self.suffix  = suffix
 
@@ -37,6 +39,9 @@ class Symbol:
 
     def has_currency(self, currency: str) -> bool:
         return currency in []
+
+    def price_dif_to_pips(self, diff : float) -> int:
+        return int(diff * 10 ** self.decimal_places)
 
     def __eq__(self, other: 'Symbol') -> bool:
         return (
@@ -59,5 +64,8 @@ class Symbol:
 
     def __iter__(self):
         return iter((self.base_currency,self.quote_currency))
+
+
+
 
 

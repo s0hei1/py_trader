@@ -1,9 +1,11 @@
+from __future__ import annotations
 from dataclasses import dataclass
 from typing import Sequence
 import csv
 from datetime import datetime
 from third_party.candlestic.candle import Candle
 import pandas as pd
+import numpy as np
 
 @dataclass
 class Chart:
@@ -38,7 +40,6 @@ class Chart:
 
         return df
 
-
     @classmethod
     def from_pd_dataframe(cls, data_frame : pd.DataFrame, time_frame : str) -> 'Chart':
         candles = []
@@ -55,7 +56,7 @@ class Chart:
         return cls(candles)
 
     @classmethod
-    def from_csv(cls, file_path: str) -> 'Chart':
+    def from_csv(cls, file_path: str) -> Chart:
         candles = []
         with open(file_path, newline='') as csvfile:
             reader = csv.reader(csvfile)
@@ -72,3 +73,16 @@ class Chart:
                 )
                 candles.append(candle)
         return cls(candles)
+
+    def separate_ochl(self, to_ndarray : bool = False) -> (
+            tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray] |
+            Sequence[tuple[float,float,float,float,float]]
+    ):
+        data = [(i.open, i.close, i.high, i.low, i.datetime.timestamp()) for i in self.candles]
+
+        if to_ndarray:
+            arr =  np.array(data, dtype=float)
+            opens, closes, highs, lows, times = arr.T
+            return (opens, closes, highs, lows, times)
+
+        return data

@@ -2,7 +2,7 @@ from src.data.repo.pattern_repo import PatternRepo
 from src.tools.di.container import Container
 import pandas as pd
 from third_party import mt5_overhead as mt5_source
-from third_party.candlestic.defaults import DefaultSymbols, DefaultTimeFrames
+from third_party.candlestic.defaults import DefaultSymbols, ClassicFractalTimeFrames
 from more_itertools import first
 import datetime as dt
 class PatternVM:
@@ -26,9 +26,9 @@ class PatternVM:
         )
 
         selected_symbol = DefaultSymbols.get_symbol_by_name(pattern.symbol_name)
-        selected_timeframe = DefaultTimeFrames.get_time_frame_by_name(pattern.pattern_time_frame)
+        selected_timeframe = ClassicFractalTimeFrames.get_time_frame_by_name(pattern.pattern_time_frame)
 
-        mt5_result = mt5_source.get_market_historical_data(
+        mt5_result = mt5_source.get_historical_data(
             symbol=selected_symbol,
             timeframe=selected_timeframe,
             date_from=pattern.pattern_start_date_time,
@@ -38,9 +38,9 @@ class PatternVM:
         self._selected_pattern = mt5_result.result.to_dataframe()
 
 
-        mt5_result_trigger_time = mt5_source.get_market_historical_data(
+        mt5_result_trigger_time = mt5_source.get_historical_data(
             symbol=selected_symbol,
-            timeframe=DefaultTimeFrames.get_trigger_time(selected_timeframe),
+            timeframe=ClassicFractalTimeFrames.get_trigger_time(selected_timeframe),
             date_from=pattern.pattern_start_date_time,
             date_to=pattern.pattern_end_date_time + dt.timedelta(minutes=selected_timeframe.included_m1),
         )
