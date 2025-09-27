@@ -9,7 +9,7 @@ from third_party.candlestic.time_frame import TimeFrame
 from third_party.mt5_overhead.exception import MetaTraderIOException
 from third_party.mt5_overhead.mt5_result import LastErrorResult, Mt5Result, LastTickResult
 from third_party.mt5_overhead.ordertype import OrderType
-
+from pandas import DataFrame
 P = ParamSpec("P")
 T = TypeVar("T")
 
@@ -55,9 +55,13 @@ def get_historical_data(
         date_from: dt.datetime,
         date_to: dt.datetime,
         date_to_le : bool = False,
+        date_from_gt : bool = False,
 ) -> Mt5Result[Chart | None]:
     if date_to_le:
         date_to = date_to + dt.timedelta(minutes=timeframe.included_m1)
+
+    if date_from_gt:
+        date_from = date_to + dt.timedelta(minutes=timeframe.included_m1)
 
     result = mt5.copy_rates_range(
         symbol.symbol_name,
@@ -100,7 +104,8 @@ def get_last_n_historical_data(
         symbol: Symbol,
         timeframe: TimeFrame,
         n : int,
-) -> Mt5Result[Chart | None]:
+        as_dataframe : bool = False
+) -> Mt5Result[Chart | DataFrame | None]:
 
     result = mt5.copy_rates_from_pos(
         symbol.symbol_name,
@@ -139,6 +144,53 @@ def get_last_n_historical_data(
         result_code=_last_error[1],
         result=chart,
     )
+
+@_mt5_initialize
+def get_last_n_historical_data_from_date(
+        symbol: Symbol,
+        timeframe: TimeFrame,
+        date_from : dt.datetime,
+        n : int,
+) -> Mt5Result[Chart | None]:
+
+    result = mt5.copy_rates_from_pos(
+        symbol.symbol_name,
+        timeframe.mt5_value,
+        date_from,
+        n
+    )
+
+    _last_error = mt5.last_error()
+
+    if result is None and mt5.last_error()[0] != 1:
+        raise MetaTraderIOException(message=_last_error[1], code=_last_error[0], )
+
+    o = itemgetter(1)
+    h = itemgetter(2)
+    l = itemgetter(3)
+    c = itemgetter(4)
+    timestamp = itemgetter(0)
+
+    chart = Chart(
+        candles=[
+            Candle(
+                open=o(i),
+                high=h(i),
+                low=l(i),
+                close=c(i),
+                datetime=dt.datetime.fromtimestamp(timestamp(i), dt.UTC),
+            ) for i in result
+        ],
+        time_frame=timeframe.name
+    )
+
+    return Mt5Result(
+        has_error=False,
+        message=_last_error[0],
+        result_code=_last_error[1],
+        result=chart,
+    )
+
 
 @_mt5_initialize
 def get_symbol_current_price(symbol: Symbol) -> Mt5Result[float]:

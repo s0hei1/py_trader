@@ -134,7 +134,11 @@ class Chart:
 
         super().__delattr__(key)
 
-    def update_chart(self,new_candles : Sequence[Candle]):
+    def update_chart(self,new_candles : Sequence[Candle]) -> None:
+
+        if new_candles is None or new_candles == [] :
+            return None
+
         candles = list(self.candles)
 
         last_candle = last(candles)
@@ -144,4 +148,6 @@ class Chart:
             candles.append(candle)
 
         self.candles = candles
-        self.on_chart_update(self.candles)
+
+        if self.on_chart_update is not None:
+            self.on_chart_update(self.candles)

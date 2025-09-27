@@ -1,40 +1,21 @@
-from typing import Literal, TypeAlias
 import talib
 from third_party.auto_trader.strategy import BaseStrategy
 import pandas as pd
 from third_party.auto_trader.trade_signal import TradeSignal
-from third_party.candlestic import Chart
-from third_party.candlestic.indicator import Indicator
 from third_party.mt5_overhead.ordertype import OrderType, OrderTypes
 
-CloseStatus: TypeAlias = Literal['upper_ma', 'under_ma']
 
 
 class SimpleMAStrategy(BaseStrategy):
-    price_close_location: CloseStatus
 
-    def __init__(self, chart: Chart):
-        self.chart = chart
 
-        opens, closes, highs, lows, times = chart.separate_ochl(to_ndarray=True)
+    def check_signal(self, chart: pd.DataFrame) -> TradeSignal | None:
 
-        ma_indicator = Indicator(
-            name="ma20",
-            values=
-        )
-
-        atr_indicator = Indicator(
-            name="atr21",
-
-        )
-
-    def check_signal(self, df: pd.DataFrame) -> TradeSignal | None:
-
-        df['ma20'] = talib.MA(df['close'], timeperiod=21)
-        df['atr21'] = values = talib.ATR(
-            df['high'],
-            df['low'],
-            df['close'],
+        chart['ma20'] = talib.MA(chart['close'], timeperiod=21)
+        chart['atr21'] = values = talib.ATR(
+            chart['high'],
+            chart['low'],
+            chart['close'],
             timeperiod=24
         )
 
@@ -47,13 +28,13 @@ class SimpleMAStrategy(BaseStrategy):
 
             return 'eq'
 
-        df['close_status'] = df.apply(set_close_status, axis=1)
+        chart['close_status'] = chart.apply(set_close_status, axis=1)
 
-        if df.at[df.index[-2], 'close_status'] != df.at[df.index[-1], 'close_status']:
-            current_status = df.at[df.index[-1], 'close_status']
+        if chart.at[chart.index[-2], 'close_status'] != chart.at[chart.index[-1], 'close_status']:
+            current_status = chart.at[chart.index[-1], 'close_status']
 
-            entry_price = df.at[df.index[-1], 'close']
-            atr = df.at[df.index[-1], 'atr21']
+            entry_price = chart.at[chart.index[-1], 'close']
+            atr = chart.at[chart.index[-1], 'atr21']
             order_type: OrderType | None = None
             stop_loss: float | None = None
             take_profit: float | None = None

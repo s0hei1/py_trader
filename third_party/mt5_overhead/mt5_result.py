@@ -9,6 +9,10 @@ class LastErrorResult:
     message : str
     result_code : int
 
+    @property
+    def has_error(self) -> bool:
+        return self.result_code != 1
+
 @dataclass
 class Mt5Result(Generic[T]):
     has_error : bool
