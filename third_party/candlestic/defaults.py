@@ -68,6 +68,7 @@ class ClassicFractalTimeFrames:
 
 class DefaultSymbols:
     eur_usd : Symbol = Symbol("EUR", "USD", 4)
+    btc_usd : Symbol = Symbol("BTC", "USD", 0)
 
     @classmethod
     def get_symbols(cls) -> list[Symbol]:
