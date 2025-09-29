@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+import datetime as dt
 
 
 @dataclass(frozen= True)
@@ -8,7 +8,15 @@ class Candle:
     high : float
     low : float
     close : float
-    datetime : datetime
+    date_time : dt.datetime
+
+
+    # TODO
+    # timestamp : int
+    # @property
+    # def date_time(self):
+    #     return dt.datetime.fromtimestamp(timestamp(i), dt.UTC)
+    #
 
     def is_bearish(self) -> bool:
         return self.open > self.close
@@ -22,14 +30,14 @@ class Candle:
     def candle_body_len(self) -> float:
         return abs(self.open - self.close)
 
-    def to_tuple(self) -> tuple[float, float, float, float, datetime]:
-        return (self.open, self.high, self.low, self.close, self.datetime)
+    def to_tuple(self) -> tuple[float, float, float, float, dt.datetime]:
+        return (self.open, self.high, self.low, self.close, self.date_time)
 
     def __str__(self):
-        return f"date-time: {self.datetime} o: {self.open} h: {self.high} l: {self.low} c: {self.close} "
+        return f"date-time: {self.date_time} o: {self.open} h: {self.high} l: {self.low} c: {self.close} "
 
     def __repr__(self):
-        return f'date-time= {self.datetime} open= {self.open} high= {self.high} low= {self.low} close= {self.close}\n'
+        return f'datetime= {self.date_time} open= {self.open} high= {self.high} low= {self.low} close= {self.close}\n'
 
     def __len__(self):
         return self.high - self.low
