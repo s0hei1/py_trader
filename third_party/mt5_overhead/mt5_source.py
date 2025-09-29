@@ -86,10 +86,10 @@ def get_historical_data(
                 high=h(i),
                 low=l(i),
                 close=c(i),
-                datetime=dt.datetime.fromtimestamp(timestamp(i), dt.UTC),
+                date_time=dt.datetime.fromtimestamp(timestamp(i), dt.UTC),
             ) for i in result
         ],
-        time_frame=timeframe.name
+        timeframe=timeframe.name
     )
 
     return Mt5Result(
@@ -132,10 +132,10 @@ def get_last_n_historical_data(
                 high=h(i),
                 low=l(i),
                 close=c(i),
-                datetime=dt.datetime.fromtimestamp(timestamp(i), dt.UTC),
+                date_time=dt.datetime.fromtimestamp(timestamp(i), dt.UTC),
             ) for i in result
         ],
-        time_frame=timeframe.name
+        timeframe=timeframe.name
     )
 
     return Mt5Result(
@@ -178,10 +178,10 @@ def get_last_n_historical_data_from_date(
                 high=h(i),
                 low=l(i),
                 close=c(i),
-                datetime=dt.datetime.fromtimestamp(timestamp(i), dt.UTC),
+                date_time=dt.datetime.fromtimestamp(timestamp(i), dt.UTC),
             ) for i in result
         ],
-        time_frame=timeframe.name
+        timeframe=timeframe.name
     )
 
     return Mt5Result(
