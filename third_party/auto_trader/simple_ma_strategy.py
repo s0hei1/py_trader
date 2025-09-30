@@ -1,18 +1,12 @@
 import talib
-from numpy._typing import NDArray
-
-from third_party.auto_trader.strategy import BaseStrategy
 import pandas as pd
-from third_party.auto_trader.trade_signal import TradeSignal
 from third_party.candlestic import Chart
-from third_party.mt5_overhead.ordertype import OrderType, OrderTypes
-
 
 class StrategyProtocol:
 
-    def init_history(self,*args, **kwargs):...
+    def initialize(self,*args, **kwargs):...
 
-    def check_signal(self,data): ...
+    def next(self,data): ...
 
 class SimpleMAStrategy:
 
@@ -20,14 +14,39 @@ class SimpleMAStrategy:
 
     async def setup(self, data : Chart):
         if self.candles_df is None:
-            self.candles_df = data.to_dataframe()
-        # else:
-        #     await self.next(data.to_dataframe())
+            await self.initialize(data)
+        else:
+            await self.next(data.to_dataframe())
 
-    async def next(self, data : pd.DataFrame):
+
+    async def _calculate_indicators(self):
+
+        atr = talib.ATR(
+            self.candles_df['high'],
+            self.candles_df['low'],
+            self.candles_df['close'],
+            timeperiod = 24
+        )
+
+        ma = talib.MA(
+            self.candles_df['close'],
+            timeperiod=20
+        )
+
+        self.candles_df['atr'] = atr
+        self.candles_df['ma'] = ma
+
+
+    async def initialize(self, data : Chart):
+        self.candles_df = data.to_dataframe()
+        await self._calculate_indicators()
+
+
+    async def next(self, data : Chart):
+
         self.candles_df = pd.concat(
             [self.candles_df,
-            data]
+            data],
+            ignore_index=True
         )
-        print(self.candles_df)
-
+        await self._calculate_indicators()
