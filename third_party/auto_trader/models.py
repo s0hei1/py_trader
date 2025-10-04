@@ -8,5 +8,6 @@ class TradeSignal:
     entry_price : float | None = None
     stop_loss_price : float | None = None
     take_profit_price : float | None = None
+    external_trade_id : str | None = None
 
 

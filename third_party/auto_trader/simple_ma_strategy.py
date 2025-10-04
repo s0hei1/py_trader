@@ -1,19 +1,18 @@
+from typing import runtime_checkable
 import talib
-from numpy._typing import NDArray
-
-from third_party.auto_trader.strategy import BaseStrategy
 import pandas as pd
-from third_party.auto_trader.trade_signal import TradeSignal
 from third_party.candlestic import Chart
-from third_party.mt5_overhead.ordertype import OrderType, OrderTypes
 
-
+@runtime_checkable
 class StrategyProtocol:
 
-    def init_history(self, *args, **kwargs): ...
+    def initialize(self,*args, **kwargs):...
 
-    def check_signal(self, data): ...
+    def next(self,data): ...
 
+@runtime_checkable
+class RiskManagerProtocol(StrategyProtocol):
+    def calculate_size(self,*args)->float:...
 
 class SimpleMAStrategy:
     candles_df: pd.DataFrame | None = None
@@ -71,10 +70,10 @@ class SimpleMAStrategy:
 
 
 
-
-        return TradeSignal(
-            order_type: ,
-            entry_price:,
-            stop_loss_price:,
-            take_profit_price:,
-        )
+        #
+        # return TradeSignal(
+        #     order_type: ,
+        #     entry_price:,
+        #     stop_loss_price:,
+        #     take_profit_price:,
+        # )
