@@ -15,43 +15,65 @@ class RiskManagerProtocol(StrategyProtocol):
     def calculate_size(self,*args)->float:...
 
 class SimpleMAStrategy:
+    candles_df: pd.DataFrame | None = None
 
-    candles_df : pd.DataFrame | None = None
-
-    async def setup(self, data : Chart):
+    async def setup(self, data: Chart):
         if self.candles_df is None:
-            await self.initialize(data)
+            self.candles_df = await self.trasnform(data.to_dataframe())
         else:
-            await self.next(data.to_dataframe())
+            self.candles_df = pd.concat([
+                self.candles_df,
+                data.to_dataframe()
+            ])
+            self.candles_df = await self.trasnform(self.candles_df)
+            self.candles_df = await self.clean_memory(self.candles_df)
+            await self.next(self.candles_df)
 
-    async def _calculate_indicators(self):
+    async def clean_memory(self, df: pd.DataFrame):
+        if len(df) < 500:
+            return
 
-        atr = talib.ATR(
-            self.candles_df['high'],
-            self.candles_df['low'],
-            self.candles_df['close'],
-            timeperiod = 24
+        df = df.iloc[-500:-1]
+        return df
+
+    async def trasnform(self, df: pd.DataFrame):
+
+        df['atr'] = talib.ATR(
+            high=df['high'],
+            low=df['low'],
+            close=df['close'],
+            timeperiod=21
+        )
+        df['ma'] = talib.MA(
+            real=df['close'],
+            timeperiod=21
         )
 
-        ma = talib.MA(
-            self.candles_df['close'],
-            timeperiod=20
-        )
+        def set_ma_status(row):
+            if row['close'] > row['ma']:
+                return 'upper'
+            if row['close'] < row['ma']:
+                return 'under'
+            return 'eq'
 
-        self.candles_df['atr'] = atr
-        self.candles_df['ma'] = ma
+        df['ma_status'] = df.apply(set_ma_status, axis=1)
+
+        return df
+
+    async def next(self, data: pd.DataFrame):
+
+        last_ma_status = data.iloc[-1]['ma_status']
+        pre_last_ma_status = data.iloc[-2]['ma_status']
+
+        if last_ma_status == pre_last_ma_status:
+            return None
 
 
-    async def initialize(self, data : Chart):
-        self.candles_df = data.to_dataframe()
-        await self._calculate_indicators()
 
-
-    async def next(self, data : Chart):
-
-        self.candles_df = pd.concat(
-            [self.candles_df,
-            data],
-            ignore_index=True
-        )
-        await self._calculate_indicators()
+        #
+        # return TradeSignal(
+        #     order_type: ,
+        #     entry_price:,
+        #     stop_loss_price:,
+        #     take_profit_price:,
+        # )
