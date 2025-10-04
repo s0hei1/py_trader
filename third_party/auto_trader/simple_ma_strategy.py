@@ -1,12 +1,18 @@
+from typing import runtime_checkable
 import talib
 import pandas as pd
 from third_party.candlestic import Chart
 
+@runtime_checkable
 class StrategyProtocol:
 
     def initialize(self,*args, **kwargs):...
 
     def next(self,data): ...
+
+@runtime_checkable
+class RiskManagerProtocol(StrategyProtocol):
+    def calculate_size(self,*args)->float:...
 
 class SimpleMAStrategy:
 
@@ -17,7 +23,6 @@ class SimpleMAStrategy:
             await self.initialize(data)
         else:
             await self.next(data.to_dataframe())
-
 
     async def _calculate_indicators(self):
 

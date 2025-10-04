@@ -337,6 +337,3 @@ def get_orders_history() -> Mt5Result[list[mt5.TradeOrder]]:
         message=lasterror.message,
         result=list(orders)
     )
-
-
-print()
