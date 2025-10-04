@@ -1,18 +1,8 @@
-from typing import runtime_checkable
+
 import talib
 import pandas as pd
 from third_party.candlestic import Chart
 
-@runtime_checkable
-class StrategyProtocol:
-
-    def initialize(self,*args, **kwargs):...
-
-    def next(self,data): ...
-
-@runtime_checkable
-class RiskManagerProtocol(StrategyProtocol):
-    def calculate_size(self,*args)->float:...
 
 class SimpleMAStrategy:
     candles_df: pd.DataFrame | None = None
