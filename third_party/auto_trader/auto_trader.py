@@ -1,8 +1,8 @@
 from typing import Any
 import datetime as dt
 from third_party import mt5_overhead as mt5
-from third_party.auto_trader.simple_ma_strategy import StrategyProtocol, RiskManagerProtocol
 from third_party.auto_trader.models import TradeSignal
+from third_party.auto_trader.protocols import StrategyProtocol, RiskManagerProtocol
 from third_party.candlestic import Symbol, TimeFrame
 
 
