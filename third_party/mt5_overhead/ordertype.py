@@ -1,3 +1,4 @@
+from __future__ import annotations
 from enum import Enum
 from typing import ClassVar, Literal
 from enum import Enum
@@ -19,14 +20,24 @@ class OrderType:
 
 
 
-class OrderTypes(Enum):
+class OrderTypes:
     buy_limit: ClassVar[OrderType] = OrderType(base_type="BUY", name="Buy Limit", mt5_type=mt5.ORDER_TYPE_BUY_LIMIT)
     sell_limit: ClassVar[OrderType] = OrderType(base_type="SELL", name="Sell Limit", mt5_type=mt5.ORDER_TYPE_SELL_LIMIT)
 
     @classmethod
-    def get_type_names(cls) -> list[str]:
-        return [i.value.name for i in cls]
+    def get_order_types(cls) -> list[OrderType]:
+        return [
+            getattr(cls, i)
+            for i in OrderType.__annotations__
+            if isinstance(getattr(cls, i), OrderType)
+        ]
+
 
     @classmethod
-    def get_type_by_name(cls, input_name: str) -> OrderType:
-        return first([i.value for i in cls if i.value.name == input_name])
+    def get_type_names(self) -> list[str]:
+        return [i.name for i in self.get_order_types()]
+
+    @classmethod
+    def get_type_by_name(self, input_name: str) -> OrderType:
+        return first([i for i in self.get_order_types() if i.name == input_name])
+
