@@ -3,6 +3,8 @@ from src.data.repo.flags_repo import FlagsRepo
 from src.data.repo.pattern_repo import PatternRepo
 from src.data.repo.place_order_repo import PlaceOrderRepo
 from src.tools.config.settings import Settings
+from third_party.auto_trader.risk_managers.static_risk_manager import StaticRiskManager
+from third_party.auto_trader.strategies.simple_ma_strategy import SimpleMACrossStrategy
 
 
 class Container():
@@ -27,3 +29,4 @@ class Container():
     @classmethod
     def place_order_repo(cls) -> PlaceOrderRepo:
         return PlaceOrderRepo(session=Container.get_session())
+

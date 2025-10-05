@@ -9,7 +9,7 @@ class StaticRiskManager:
 
         self.risk_size = risk_size
         self.balance = balance
-    def calculate_risk(self, entry_price : float, stop_loss_price : float) -> tuple[float, float]:
+    def calculate_size(self, entry_price : float, stop_loss_price : float) -> tuple[float, float]:
         risk_per_unit = self.balance * (self.risk_size / 100)
         units = abs(entry_price - stop_loss_price)
         base_currency_vol = risk_per_unit / units

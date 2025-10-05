@@ -28,7 +28,9 @@ class SimpleAutoTrader:
 
         async for chart in live_chart_stream:
 
-            if not self.strategy.is_initialized():
+            print("StrategyA is running")
+
+            if not self.strategy.is_initialized:
                 self.strategy.initialize(chart)
                 continue
 

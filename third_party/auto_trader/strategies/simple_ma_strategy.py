@@ -8,19 +8,34 @@ from third_party.mt5_overhead import OrderTypes
 class SimpleMACrossStrategy:
     chart_data: pd.DataFrame | None = None
 
-    def initialize(self, chart_data: Chart):
+    def __init__(self, ma_time_period : int = 24, atr_time_period : int = 24):
+        self.ma_time_period = ma_time_period
+        self.atr_time_period = atr_time_period
+
+    @property
+    def settings(self) -> dict:
+        return {
+            'atr' : self.atr_time_period,
+            'ma' : self.ma_time_period
+        }
+
+    def initialize(self, chart_data: Chart) -> None:
         self.chart_data = chart_data.to_dataframe()
+
+    @property
+    def is_initialized(self) -> bool:
+        return self.chart_data is not None
 
     def transform_data(self):
         self.chart_data['atr'] = talib.ATR(
             high=self.chart_data['high'],
             low=self.chart_data['low'],
             close=self.chart_data['close'],
-            timeperiod=21
+            timeperiod=self.atr_time_period
         )
         self.chart_data['ma'] = talib.MA(
             real=self.chart_data['close'],
-            timeperiod=21
+            timeperiod=self.ma_time_period
         )
 
         def set_ma_status(row):

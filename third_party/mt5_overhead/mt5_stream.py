@@ -1,7 +1,10 @@
 import asyncio
 from typing import Iterator
+
+import numpy as np
 from more_itertools import last
 from numpy._typing import NDArray
+from sqlalchemy.sql.functions import concat
 
 from third_party.candlestic import Symbol, TimeFrame, Chart
 import datetime as dt
@@ -15,7 +18,7 @@ async def stream_chart_data(
         timeframe: TimeFrame,
         date_from: dt.datetime,
         as_chart: bool = False
-) -> Iterator[Chart] | Iterator[NDArray[tuple]]:
+) -> Iterator[Chart] | Iterator[NDArray[tuple]] | None:
     data = mt5.copy_rates_range(
         symbol.symbol_name,
         timeframe.mt5_value,
@@ -29,6 +32,7 @@ async def stream_chart_data(
     get_current_minute = lambda: dt.datetime.now(dt.UTC).minute
     current_minute = get_current_minute()
     while True:
+        print("StrategyA is running")
         await asyncio.sleep(1)
         if current_minute == get_current_minute():
             continue
@@ -43,6 +47,8 @@ async def stream_chart_data(
             dt.datetime.now(dt.UTC),
         )
         data = data[1:]
+        if data.size == 0:
+            continue
 
         yield Chart.from_mt5_data(data, timeframe) if as_chart else data
 
