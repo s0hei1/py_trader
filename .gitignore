@@ -132,3 +132,4 @@ __marimo__/
 /src/tools/config/.env
 /playground
 /src/data/migrations/alembic/versions/*
+/development_db.db
