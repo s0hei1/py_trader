@@ -18,7 +18,7 @@ class AutoTradingVM(object):
         auto_trader = SimpleAutoTrader(
             strategy=SimpleMACrossStrategy(),
             symbol=DefaultSymbols.gbp_usd,
-            timeframe=ClassicFractalTimeFrames.H1,
+            timeframe=ClassicFractalTimeFrames.M1,
             risk_manager=StaticRiskManager(
                 balance=flags.total_balance,
                 risk_size=flags.risk_percentage

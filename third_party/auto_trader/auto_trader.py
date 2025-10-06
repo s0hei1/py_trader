@@ -26,15 +26,21 @@ class SimpleAutoTrader:
             as_chart=True
         )
 
+        print("StrategyA is running")
+
         async for chart in live_chart_stream:
 
-            print("StrategyA is running")
+
 
             if not self.strategy.is_initialized:
                 self.strategy.initialize(chart)
                 continue
 
-            trade_signal : TradeSignal | None= self.strategy.signal(chart)
+            print("StrategyA is running next")
+
+            trade_signal : TradeSignal | None= self.strategy.next(chart)
+
+            print("signal is: ", trade_signal)
 
             if trade_signal is None:
                 continue

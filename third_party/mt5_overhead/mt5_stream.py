@@ -20,11 +20,13 @@ async def stream_chart_data(
         as_chart: bool = False
 ) -> Iterator[Chart] | Iterator[NDArray[tuple]] | None:
     data = mt5.copy_rates_range(
-        symbol.symbol_name,
+        symbol.symbol_fullname,
         timeframe.mt5_value,
         date_from,
         dt.datetime.now(dt.UTC),
     )
+
+    print(data)
 
 
     yield Chart.from_mt5_data(data, timeframe) if as_chart else data
@@ -32,7 +34,7 @@ async def stream_chart_data(
     get_current_minute = lambda: dt.datetime.now(dt.UTC).minute
     current_minute = get_current_minute()
     while True:
-        print("StrategyA is running")
+
         await asyncio.sleep(1)
         if current_minute == get_current_minute():
             continue
@@ -41,15 +43,17 @@ async def stream_chart_data(
         last_row = last(data)
 
         data = mt5.copy_rates_range(
-            symbol.symbol_name,
+            symbol.symbol_fullname,
             timeframe.mt5_value,
             dt.datetime.fromtimestamp(last_row[0], dt.UTC),
             dt.datetime.now(dt.UTC),
         )
-        data = data[1:]
-        if data.size == 0:
+        new_data = data[1:]
+        if new_data.size == 0:
             continue
 
-        yield Chart.from_mt5_data(data, timeframe) if as_chart else data
+        print('new_data is:' ,new_data)
+
+        yield Chart.from_mt5_data(new_data, timeframe) if as_chart else data
 
 
