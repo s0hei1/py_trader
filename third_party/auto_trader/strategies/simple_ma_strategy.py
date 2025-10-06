@@ -3,7 +3,7 @@ import talib
 from third_party.auto_trader.models import TradeSignal
 from third_party.candlestic import Chart
 from third_party.mt5_overhead import OrderTypes
-
+from random import randint
 
 class SimpleMACrossStrategy:
     chart_data: pd.DataFrame | None = None
@@ -54,13 +54,17 @@ class SimpleMACrossStrategy:
         self.chart_data = self.chart_data.iloc[-500:-1].reset_index(drop=True)
 
     def next(self, data: Chart) -> TradeSignal | None:
-        self.chart_data = pd.concat([self.chart_data, data], ignore_index=True)
+        self.chart_data = pd.concat([self.chart_data, data.to_dataframe()], ignore_index=True)
         self.transform_data()
         self.clean_memory()
 
         last_ma_status = self.chart_data.iloc[-1]['ma_status']
         pre_last_ma_status = self.chart_data.iloc[-2]['ma_status']
 
+
+        print("last_ma_status: ",last_ma_status," pre_last_ma_status: ", pre_last_ma_status)
+        print("ma value:", self.chart_data.iloc[-1]['ma'])
+        print("close:", self.chart_data.iloc[-1]['close'])
         if last_ma_status == pre_last_ma_status:
             return None
 
@@ -73,10 +77,11 @@ class SimpleMACrossStrategy:
 
         stop_loss = last_close - stop_loss_units if order_type.base_type == "BUY" else last_close + stop_loss_units
         take_profit = last_close + tp_units if order_type.base_type == "BUY" else last_close - tp_units
-
+        id = randint(10000,99999)
         return TradeSignal(
             order_type=order_type,
             entry_price= self.chart_data.iloc[-1]['close'],
             stop_loss_price= stop_loss,
-            take_profit_price= take_profit
+            take_profit_price= take_profit,
+            external_trade_id = str(id),
         )
