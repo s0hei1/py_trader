@@ -18,6 +18,9 @@ __all__ = [
     'get_last_n_historical_data',
     'get_last_n_historical_data_from_date',
     'stream_chart_data',
+    'get_last_tick_datetime',
 
     'OrderTypes',
 ]
+
+from third_party.mt5_overhead.tools import get_last_tick_datetime
