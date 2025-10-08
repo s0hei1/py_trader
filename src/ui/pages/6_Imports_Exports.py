@@ -10,7 +10,10 @@ from src.ui.viewmodel.imports_vm import ImportsVM
 if 'imports_vm' not in state:
     state.imports_vm = ImportsVM()
 
-st.header("Import Data")
+st.header("Import/Export Data")
+
+
+st.write("Pattern Importing")
 
 cols = st.columns([1,3])
 
@@ -39,3 +42,5 @@ if st.button('Sync Data'):
     result = state.imports_vm.on_sync_data_click()
 
     ShowResult(result)
+
+st.write('Export Data')

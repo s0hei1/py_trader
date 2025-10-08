@@ -8,22 +8,24 @@ from sqlalchemy.sql.functions import concat
 
 from third_party.candlestic import Symbol, TimeFrame, Chart
 import datetime as dt
-from third_party.mt5_overhead.mt5_source import mt5_initialize_docrator, mt5_last_error
-import MetaTrader5 as mt5
+
+from third_party.mt5_overhead.tools import get_last_tick_datetime
+from third_party.mt5_overhead.mt5_source import mt5_initialize_decor, mt5_last_error
+import MetaTrader5._core as mt5
 
 
-@mt5_initialize_docrator
+@mt5_initialize_decor
 async def stream_chart_data(
         symbol: Symbol,
         timeframe: TimeFrame,
         date_from: dt.datetime,
         as_chart: bool = False
 ) -> Iterator[Chart] | Iterator[NDArray[tuple]] | None:
-    data = mt5.copy_rates_range(
+    data = mt5.copy_rates_from_pos(
         symbol.symbol_fullname,
         timeframe.mt5_value,
-        date_from,
-        dt.datetime.now(dt.UTC),
+        1,
+        100,
     )
 
     print(data)
@@ -45,10 +47,10 @@ async def stream_chart_data(
         data = mt5.copy_rates_range(
             symbol.symbol_fullname,
             timeframe.mt5_value,
-            dt.datetime.fromtimestamp(last_row[0], dt.UTC),
-            dt.datetime.now(dt.UTC),
+            dt.datetime.fromtimestamp(last_row[0]),
+            get_last_tick_datetime() + dt.timedelta(minutes=timeframe.included_m1),
         )
-        new_data = data[1:]
+        new_data = data
         if new_data.size == 0:
             continue
 

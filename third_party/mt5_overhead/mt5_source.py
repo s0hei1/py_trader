@@ -22,7 +22,7 @@ def mt5_last_error() -> LastErrorResult:
     )
 
 
-def mt5_initialize_docrator(func: Callable[P, Mt5Result[T | None]]) -> Callable[..., Mt5Result[T | None]]:
+def mt5_initialize_decor(func: Callable[P, Mt5Result[T | None]]) -> Callable[..., Mt5Result[T | None]]:
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> Mt5Result[T | None]:
         init_result = mt5.initialize()
         if not init_result:
@@ -35,7 +35,9 @@ def mt5_initialize_docrator(func: Callable[P, Mt5Result[T | None]]) -> Callable[
             )
 
         try:
-            return func(*args, **kwargs)
+            result = func(*args, **kwargs)
+            # mt5.shutdown()
+            return result
         except MetaTraderIOException as e:
             _last_error = mt5_last_error()
             return Mt5Result(
@@ -48,7 +50,7 @@ def mt5_initialize_docrator(func: Callable[P, Mt5Result[T | None]]) -> Callable[
     return wrapper
 
 
-@mt5_initialize_docrator
+@mt5_initialize_decor
 def get_historical_data(
         symbol: Symbol,
         timeframe: TimeFrame,
@@ -99,7 +101,7 @@ def get_historical_data(
         result=chart,
     )
 
-@mt5_initialize_docrator
+@mt5_initialize_decor
 def get_last_n_historical_data(
         symbol: Symbol,
         timeframe: TimeFrame,
@@ -145,7 +147,7 @@ def get_last_n_historical_data(
         result=chart,
     )
 
-@mt5_initialize_docrator
+@mt5_initialize_decor
 def get_last_n_historical_data_from_date(
         symbol: Symbol,
         timeframe: TimeFrame,
@@ -192,7 +194,7 @@ def get_last_n_historical_data_from_date(
     )
 
 
-@mt5_initialize_docrator
+@mt5_initialize_decor
 def get_symbol_current_price(symbol: Symbol) -> Mt5Result[float]:
     result = mt5.symbol_info_tick(symbol.symbol_fullname)
     _last_error = mt5_last_error()
@@ -213,7 +215,7 @@ def get_symbol_current_price(symbol: Symbol) -> Mt5Result[float]:
     )
 
 
-@mt5_initialize_docrator
+@mt5_initialize_decor
 def set_pending_order(
         order_type: OrderType,
         symbol: Symbol,
@@ -258,7 +260,7 @@ def set_pending_order(
     )
 
 
-@mt5_initialize_docrator
+@mt5_initialize_decor
 def get_account_info() -> Mt5Result[mt5.AccountInfo]:
     info = mt5.account_info()
 
@@ -271,7 +273,7 @@ def get_account_info() -> Mt5Result[mt5.AccountInfo]:
     )
 
 
-@mt5_initialize_docrator
+@mt5_initialize_decor
 def get_orders() -> Mt5Result[list[mt5.TradeOrder]]:
     orders = mt5.orders_get()
 
@@ -288,7 +290,7 @@ def get_orders() -> Mt5Result[list[mt5.TradeOrder]]:
 
 
 
-@mt5_initialize_docrator
+@mt5_initialize_decor
 def get_positions() -> Mt5Result[list[mt5.TradePosition]]:
     positions = mt5.positions_get()
 
@@ -304,7 +306,7 @@ def get_positions() -> Mt5Result[list[mt5.TradePosition]]:
     )
 
 
-@mt5_initialize_docrator
+@mt5_initialize_decor
 def get_deals_history(
         from_date : dt.datetime = dt.datetime.now(dt.UTC) - dt.timedelta(days=365),
         to_date : dt.datetime = dt.datetime.now(dt.UTC) + dt.timedelta(days=1)
@@ -322,7 +324,7 @@ def get_deals_history(
     )
 
 
-@mt5_initialize_docrator
+@mt5_initialize_decor
 def get_orders_history() -> Mt5Result[list[mt5.TradeOrder]]:
     from_date = dt.datetime(2020, 1, 1)
     to_date = dt.datetime(2030, 1, 1)
