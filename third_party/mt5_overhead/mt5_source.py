@@ -10,6 +10,7 @@ from third_party.mt5_overhead.exception import MetaTraderIOException
 from third_party.mt5_overhead.mt5_result import LastErrorResult, Mt5Result, LastTickResult
 from third_party.mt5_overhead.ordertype import OrderType
 from pandas import DataFrame
+
 P = ParamSpec("P")
 T = TypeVar("T")
 
@@ -56,8 +57,8 @@ def get_historical_data(
         timeframe: TimeFrame,
         date_from: dt.datetime,
         date_to: dt.datetime,
-        date_to_le : bool = False,
-        date_from_gt : bool = False,
+        date_to_le: bool = False,
+        date_from_gt: bool = False,
 ) -> Mt5Result[Chart | None]:
     if date_to_le:
         date_to = date_to + dt.timedelta(minutes=timeframe.included_m1)
@@ -101,14 +102,14 @@ def get_historical_data(
         result=chart,
     )
 
+
 @mt5_initialize_decor
 def get_last_n_historical_data(
         symbol: Symbol,
         timeframe: TimeFrame,
-        n : int,
-        as_dataframe : bool = False
+        n: int,
+        as_dataframe: bool = False
 ) -> Mt5Result[Chart | DataFrame | None]:
-
     result = mt5.copy_rates_from_pos(
         symbol.symbol_name,
         timeframe.mt5_value,
@@ -147,14 +148,14 @@ def get_last_n_historical_data(
         result=chart,
     )
 
+
 @mt5_initialize_decor
 def get_last_n_historical_data_from_date(
         symbol: Symbol,
         timeframe: TimeFrame,
-        date_from : dt.datetime,
-        n : int,
+        date_from: dt.datetime,
+        n: int,
 ) -> Mt5Result[Chart | None]:
-
     result = mt5.copy_rates_from_pos(
         symbol.symbol_name,
         timeframe.mt5_value,
@@ -223,11 +224,11 @@ def set_pending_order(
         entry_price: float,
         stop_loss: float,
         take_profit: float,
-        external_id : str,
+        external_id: str,
 ) -> Mt5Result[mt5.OrderSendResult]:
     request = {
         "action": mt5.TRADE_ACTION_PENDING,
-        "symbol": symbol.symbol_name,
+        "symbol": symbol.symbol_fullname,
         "volume": volume,
         "type": order_type.mt5_type,
         "price": entry_price,
@@ -279,15 +280,14 @@ def get_orders() -> Mt5Result[list[mt5.TradeOrder]]:
 
     lasterror = mt5_last_error()
 
-    orders= list(orders)
+    orders = list(orders)
 
     return Mt5Result(
-        has_error= lasterror.result_code != 1,
+        has_error=lasterror.result_code != 1,
         result_code=lasterror.result_code,
         message=lasterror.message,
-        result= orders
+        result=orders
     )
-
 
 
 @mt5_initialize_decor
@@ -299,26 +299,25 @@ def get_positions() -> Mt5Result[list[mt5.TradePosition]]:
     positions = list(positions)
 
     return Mt5Result(
-        has_error= lasterror.result_code != 1,
+        has_error=lasterror.result_code != 1,
         result_code=lasterror.result_code,
         message=lasterror.message,
-        result= positions
+        result=positions
     )
 
 
 @mt5_initialize_decor
 def get_deals_history(
-        from_date : dt.datetime = dt.datetime.now(dt.UTC) - dt.timedelta(days=365),
-        to_date : dt.datetime = dt.datetime.now(dt.UTC) + dt.timedelta(days=1)
+        from_date: dt.datetime = dt.datetime.now(dt.UTC) - dt.timedelta(days=365),
+        to_date: dt.datetime = dt.datetime.now(dt.UTC) + dt.timedelta(days=1)
 ) -> Mt5Result[list[mt5.TradeDeal]]:
-
-    deals = mt5.history_deals_get( from_date, to_date)
+    deals = mt5.history_deals_get(from_date, to_date)
 
     lasterror = mt5_last_error()
 
     return Mt5Result(
-        has_error= lasterror.result_code != 1,
-        result_code= lasterror.result_code,
+        has_error=lasterror.result_code != 1,
+        result_code=lasterror.result_code,
         message=lasterror.message,
         result=list(deals)
     )
