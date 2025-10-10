@@ -1,3 +1,4 @@
+from pathlib import Path
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
@@ -10,4 +11,4 @@ class Settings(BaseSettings):
 
 
     class Config:
-        env_file = r'C:\Users\m.rahimi\PycharmProjects\py_trader\src\tools\config\.env'
+        env_file = Path(__file__).parent / '.env'
