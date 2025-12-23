@@ -130,6 +130,6 @@ __marimo__/
 
 /.idea
 /src/tools/config/.env
-/playground
+/.playground
 /src/data/migrations/alembic/versions/*
 /development_db.db
