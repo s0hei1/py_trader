@@ -1,0 +1,5 @@
+
+
+# T1 => Implement Flags Page in ui app - and implement it in Backend Side for managing Flags Side
+# T2 => Implement Requesting Orders
+# T3 => Implement Pattern Trading
