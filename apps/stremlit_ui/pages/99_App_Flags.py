@@ -1,6 +1,6 @@
 import streamlit as st
 from streamlit import session_state as state
-from src.ui.viewmodel.config_vm import ConfigVM
+from apps.stremlit_ui.viewmodel.config_vm import ConfigVM
 
 if not "config_vm" in st.session_state:
     state.config_vm = ConfigVM()

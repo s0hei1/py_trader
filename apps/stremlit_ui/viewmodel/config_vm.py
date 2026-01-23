@@ -1,5 +1,5 @@
+from apps.stremlit_ui.viewmodel.vm_result import VMResult
 from src.tools.di.container import Container
-from src.ui.viewmodel.vm_result import VMResult
 
 class ConfigVM:
 

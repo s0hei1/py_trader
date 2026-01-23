@@ -1,8 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-
-from src.data.core.models import Flags
-
+from apps.py_trader.data.models.models import Flags
 
 class FlagsRepo:
     _flags_id: int = 1
@@ -19,7 +17,8 @@ class FlagsRepo:
             return flags
 
         flags = Flags(
-            id=self._flags_id
+            id=self._flags_id,
+            is_development = True
         )
 
         self.session.add(flags)
@@ -28,16 +27,12 @@ class FlagsRepo:
 
         return flags
 
-    def set_flags(self,
-                  risk_percentage=None,
-                  total_balance=None) -> Flags:
+    def set_flags(self,is_development : bool =None) -> Flags:
 
         flags = self.get_or_config_flags()
 
-        if risk_percentage is not None:
-            flags.risk_percentage = risk_percentage
-        if total_balance is not None:
-            flags.total_balance = total_balance
+        if is_development is not None:
+            flags.is_development = is_development
 
         self.session.commit()
         self.session.refresh(flags)

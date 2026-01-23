@@ -2,7 +2,7 @@ import subprocess
 from pathlib import Path
 
 def main():
-    app_dir = Path(__file__).parent.parent / "src" / "ui"
+    app_dir = Path(__file__).parent.parent / "apps" / "stremlit_ui"
 
     cmd = [
         "streamlit", "run",
