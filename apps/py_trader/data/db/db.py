@@ -1,10 +1,10 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, AsyncEngine
 from sqlalchemy.orm import sessionmaker
-from apps.paperless.di import GeneralDI
-from apps.paperless.data.db.read_only_async_session import ReadOnlyAsyncSession
+from apps.py_trader.data.config.settings import Settings
+from apps.py_trader.data.db.read_only_async_session import ReadOnlyAsyncSession
 
+def get_engine(url=Settings().database_url) -> AsyncEngine:
 
-def get_engine(url=GeneralDI.settings().development_db) -> AsyncEngine:
     return create_async_engine(url, echo=True)
 
 

@@ -6,8 +6,8 @@ class Settings(BaseSettings):
     database_url : str = ''
 
     @property
-    def database_url_without_psycopg2(self):
-        return self.database_url.replace("+psycopg2", "")
+    def database_url_without_asyncpg(self):
+        return self.database_url.replace("+asyncpg", "")
 
 
     class Config:

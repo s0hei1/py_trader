@@ -13,15 +13,17 @@ class Flags(Base):
     __tablename__ = 'flags'
 
     id : Mapped[int] = mapped_column(primary_key=True, autoincrement=False)
+    is_first_run : Mapped[bool] = mapped_column(default=False)
     is_development : Mapped[bool]
 
-class Config(Base):
-    __tablename__ = 'configs'
-    id : Mapped[int] = mapped_column(primary_key=True)
-    creation_datetime : Mapped[datetime]
-    maximum_risk_percentage : Mapped[float] = mapped_column(default=1.0)
-    default_risk_percentage : Mapped[float] = mapped_column(default=1.0)
-    total_balance : Mapped[float] = mapped_column(default=0.0)
+
+# class Config(Base):
+#     __tablename__ = 'configs'
+#     id : Mapped[int] = mapped_column(primary_key=True)
+#     creation_datetime : Mapped[datetime]
+#     maximum_risk_percentage : Mapped[float] = mapped_column(default=1.0)
+#     default_risk_percentage : Mapped[float] = mapped_column(default=1.0)
+#     total_balance : Mapped[float] = mapped_column(default=0.0)
 
 #
 # class TradingPlatform(Base):

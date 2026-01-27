@@ -2,7 +2,7 @@ import pytest
 import pytest_asyncio
 from fastapi import FastAPI
 from httpx import AsyncClient, ASGITransport
-from apps.paperless.main import app as application
+from apps.py_trader.app import app as application
 
 
 @pytest.fixture

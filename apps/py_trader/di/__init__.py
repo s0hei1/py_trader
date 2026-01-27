@@ -1,4 +1,4 @@
-from apps.paperless.di.general_di import GeneralDI
-from apps.paperless.di.repository_di import RepositoryDI
+from apps.py_trader.di.container import Container
 
-__all__ = ["GeneralDI", "RepositoryDI"]
+__all__ = ["Container"]
+

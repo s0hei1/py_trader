@@ -2,6 +2,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+
 def main():
     if len(sys.argv) > 1:
         message = " ".join(sys.argv[1:])
@@ -11,9 +12,10 @@ def main():
             print("❌ Migration message cannot be empty.")
             sys.exit(1)
 
-    migrations_dir = Path(__file__).parent.parent / "src" / "data" / "migrations"
+    migrations_dir = Path(__file__).parent.parent / "apps" / "py_trader" / "data" / "migrations"
 
     add_migrations = [
+
         "alembic", "revision",
         "--autogenerate",
         "-m", message

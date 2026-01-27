@@ -1,6 +1,8 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
+
 
 class FlagsRead(BaseModel):
-    maximum_risk_percentage : float | None = None
-    default_risk_percentage : float | None = None
-    total_balance : float | None = None
+    is_first_run : bool
+    is_development : bool
+
+    model_config = ConfigDict(from_attributes=True)
