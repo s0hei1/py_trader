@@ -1,6 +1,6 @@
 from sqlalchemy import DateTime, ForeignKey, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from datetime import datetime
+from datetime import datetime,UTC
 from apps.py_trader.data.enums.platform_type import PlatformType
 from apps.py_trader.data.enums.strategy_type import StrategyType
 
@@ -17,13 +17,14 @@ class Flags(Base):
     is_development : Mapped[bool]
 
 
-# class Config(Base):
-#     __tablename__ = 'configs'
-#     id : Mapped[int] = mapped_column(primary_key=True)
-#     creation_datetime : Mapped[datetime]
-#     maximum_risk_percentage : Mapped[float] = mapped_column(default=1.0)
-#     default_risk_percentage : Mapped[float] = mapped_column(default=1.0)
-#     total_balance : Mapped[float] = mapped_column(default=0.0)
+class Config(Base):
+    __tablename__ = 'configs'
+    id : Mapped[int] = mapped_column(primary_key=True)
+    creation_datetime : Mapped[datetime]
+    maximum_risk_percentage : Mapped[float] = mapped_column(default=1.0)
+    default_risk_percentage : Mapped[float] = mapped_column(default=1.0)
+    total_balance : Mapped[float] = mapped_column(default=0.0)
+
 
 #
 # class TradingPlatform(Base):
