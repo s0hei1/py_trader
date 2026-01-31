@@ -1,4 +1,4 @@
-from sqlalchemy import DateTime, ForeignKey, String
+from sqlalchemy import DateTime, ForeignKey, String, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from datetime import datetime,UTC
 from apps.py_trader.data.enums.platform_type import PlatformType
@@ -20,10 +20,17 @@ class Flags(Base):
 class Config(Base):
     __tablename__ = 'configs'
     id : Mapped[int] = mapped_column(primary_key=True)
-    creation_datetime : Mapped[datetime]
+    creation_datetime: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     maximum_risk_percentage : Mapped[float] = mapped_column(default=1.0)
     default_risk_percentage : Mapped[float] = mapped_column(default=1.0)
     total_balance : Mapped[float] = mapped_column(default=0.0)
+
+class Strategy(Base):
+    __tablename__ = 'strategies'
+
+    id : Mapped[int] = mapped_column(primary_key=True)
+    strategy_name : Mapped[str]
+    strategy_type : Mapped[StrategyType]
 
 
 #
@@ -35,7 +42,7 @@ class Config(Base):
 #     platform_url : Mapped[str]
 #     platform_type : Mapped[PlatformType]
 #
-# class TradingAccount(Base):
+# class TradingAccounts(Base):
 #     __tablename__ = 'trading_accounts'
 #
 #     id : Mapped[int] = mapped_column(primary_key=True)
@@ -46,13 +53,7 @@ class Config(Base):
 #     # trading_platform : Mapped[TradingPlatform] = relationship('TradingPlatform')
 #
 #
-# class Strategy(Base):
-#     __tablename__ = 'strategies'
-#
-#     id : Mapped[int] = mapped_column(primary_key=True)
-#     strategy_name : Mapped[str]
-#     strategy_type : Mapped[StrategyType]
-#
+
 # class PatternGroup(Base):
 #     __tablename__ = 'pattern_groups'
 #     id : Mapped[int] = mapped_column(primary_key=True)

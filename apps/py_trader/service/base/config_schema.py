@@ -24,6 +24,6 @@ class ConfigCreate(BaseModel):
         return Config(
             creation_datetime = datetime.now(UTC),
             maximum_risk_percentage = self.maximum_risk_percentage,
-            default_risk_percentage = self.maximum_risk_percentage,
-            total_balance = self.default_risk_percentage,
+            default_risk_percentage = self.default_risk_percentage,
+            total_balance = self.total_balance,
         )
