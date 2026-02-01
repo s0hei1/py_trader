@@ -1,8 +1,11 @@
+from __future__ import annotations
+from typing import List
 from sqlalchemy import DateTime, ForeignKey, String, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from datetime import datetime,UTC
 from apps.py_trader.data.enums.platform_type import PlatformType
 from apps.py_trader.data.enums.strategy_type import StrategyType
+from apps.py_trader.data.enums.times_frame_enum import TimeFrameEnum
 
 
 class Base(DeclarativeBase):
@@ -54,14 +57,33 @@ class Strategy(Base):
 #
 #
 
-# class PatternGroup(Base):
-#     __tablename__ = 'pattern_groups'
-#     id : Mapped[int] = mapped_column(primary_key=True)
-#
-# class Pattern(Base):
-#     __tablename__ = 'patterns'
-#     id : Mapped[int] = mapped_column(primary_key=True)
-#
+class Symbol(Base):
+    __tablename__ = 'symbols'
+    id : Mapped[int] = mapped_column(primary_key=True)
+    base_currency : Mapped[str]
+    quote_currency : Mapped[str]
+
+class PatternGroup(Base):
+    __tablename__ = 'pattern_groups'
+    id : Mapped[int] = mapped_column(primary_key=True)
+    name : Mapped[str]
+    is_active : Mapped[bool] = mapped_column(default=True)
+
+    patterns: Mapped[List[Pattern]] = relationship(back_populates="pattern_group")
+
+class Pattern(Base):
+    __tablename__ = 'patterns'
+    id : Mapped[int] = mapped_column(primary_key=True)
+    pattern_group_id : Mapped[int] = mapped_column(ForeignKey('pattern_groups.id'))
+    pattern_first_candle : Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    pattern_last_candle : Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    is_active : Mapped[bool] = mapped_column(default=True)
+    time_frame : Mapped[TimeFrameEnum]
+    symbol_id : Mapped[int] = mapped_column(ForeignKey('symbols.id'))
+
+    symbol : Mapped[Symbols] = relationship()
+    pattern_group: Mapped[PatternGroup] = relationship(back_populates="patterns")
+
 #
 #
 # #DocTable Trading Scope

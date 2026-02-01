@@ -3,8 +3,9 @@ from sqlalchemy import select, exists
 from sqlalchemy.orm import Session
 import datetime as dt
 import pandas as pd
-from src.data.core.models import Pattern
-from src.data.exceptions.exc import InvalidArgumentException
+
+from apps.py_trader.data.enums.times_frame_enum import TimeFrameEnum
+from apps.py_trader.data.models.models import Pattern
 
 
 class PatternRepo:
@@ -12,50 +13,66 @@ class PatternRepo:
     def __init__(self, session: Session):
         self.session = session
 
-    def read_many(self,
-                  id: int = None,
-                  pattern_start_date_time: dt.datetime = None,
-                  pattern_end_date_time: dt.datetime = None,
-                  pattern_time_frame: str = None,
-                  symbol_name: str = None,
-                  return_first: bool = False
-                  ) -> Sequence[Pattern]:
+    def read_many(
+        self,
+        id: int | None = None,
+        group_id: int | None = None,
+        symbol_id: int | None = None,
+        time_frame: TimeFrameEnum | None = None,
+        start_dt: dt.datetime | None = None,
+        end_dt: dt.datetime | None = None,
+        only_active: bool = True,
+        return_first: bool = False,
+    ) -> Sequence[Pattern] | Pattern | None:
 
         q = select(Pattern)
 
         if id is not None:
             q = q.where(Pattern.id == id)
-        if pattern_start_date_time is not None:
-            q = q.where(Pattern.pattern_start_date_time == pattern_start_date_time)
-        if pattern_end_date_time is not None:
-            q = q.where(Pattern.pattern_end_date_time == pattern_end_date_time)
-        if pattern_time_frame is not None:
-            q = q.where(Pattern.pattern_time_frame == pattern_time_frame)
-        if symbol_name is not None:
-            q = q.where(Pattern.symbol_name == symbol_name)
 
-        result = self.session.execute(q).scalars().all()
+        if group_id is not None:
+            q = q.where(Pattern.pattern_group_id == group_id)
 
-        return result
+        if symbol_id is not None:
+            q = q.where(Pattern.symbol_id == symbol_id)
+
+        if time_frame is not None:
+            q = q.where(Pattern.time_frame == time_frame)
+
+        if only_active:
+            q = q.where(Pattern.is_active.is_(True))
+
+        if start_dt and end_dt:
+            q = q.where(
+                Pattern.pattern_first_candle <= end_dt,
+                Pattern.pattern_last_candle >= start_dt
+            )
+        elif start_dt:
+            q = q.where(Pattern.pattern_last_candle >= start_dt)
+        elif end_dt:
+            q = q.where(Pattern.pattern_first_candle <= end_dt)
+
+        result = self.session.execute(q).scalars()
+
+        return result.first() if return_first else result.all()
 
     def create(self, pattern: Pattern) -> Pattern:
 
-        if pattern.pattern_start_date_time >= pattern.pattern_end_date_time:
-            raise InvalidArgumentException("Pattern start dt must less than end dt")
+        if pattern.pattern_first_candle >= pattern.pattern_last_candle:
+            raise ValueError("pattern_first_candle must be earlier than pattern_last_candle")
 
+        # prevent duplicates
         q = select(
             exists().where(
-                Pattern.pattern_start_date_time == pattern.pattern_start_date_time,
-                Pattern.pattern_end_date_time == pattern.pattern_end_date_time,
-                Pattern.symbol_name == pattern.symbol_name,
-                Pattern.pattern_time_frame == pattern.pattern_time_frame
+                Pattern.symbol_id == pattern.symbol_id,
+                Pattern.time_frame == pattern.time_frame,
+                Pattern.pattern_first_candle == pattern.pattern_first_candle,
+                Pattern.pattern_last_candle == pattern.pattern_last_candle,
             )
         )
 
-        pattern_existance: bool = self.session.execute(q).scalar()
-
-        if pattern_existance:
-            raise Exception(f"a pattern with details : {pattern.__dict__} \nis exists")
+        if self.session.execute(q).scalar():
+            raise ValueError("Pattern already exists")
 
         self.session.add(pattern)
         self.session.commit()
@@ -64,32 +81,38 @@ class PatternRepo:
         return pattern
 
     def create_many(self, patterns: list[Pattern]) -> list[Pattern]:
-        for i, pattern, in enumerate(patterns):
-            patterns[i] = self.create(pattern)
+        self.session.add_all(patterns)
+        self.session.commit()
         return patterns
 
-    def get_patterns(self, as_data_frame: bool | None = None) -> Sequence[Pattern] | pd.DataFrame:
+    def deactivate(self, pattern_id: int) -> None:
+        pattern = self.session.get(Pattern, pattern_id)
+        if pattern:
+            pattern.is_active = False
+            self.session.commit()
 
-        q = select(Pattern)
+    def get_df(
+        self,
+        symbol_id: int | None = None,
+        time_frame: TimeFrameEnum | None = None,
+    ) -> pd.DataFrame:
 
-        result = self.session.execute(q).scalars().all()
-
-        if as_data_frame:
-            return pd.DataFrame([i.as_dict() for i in result])
-
-        return result
-
-    def get_patterns_df(self) -> pd.DataFrame:
         q = select(
             Pattern.id,
-            Pattern.symbol_name,
-            Pattern.pattern_time_frame,
-            Pattern.pattern_start_date_time,
-            Pattern.pattern_end_date_time
+            Pattern.pattern_group_id,
+            Pattern.symbol_id,
+            Pattern.time_frame,
+            Pattern.pattern_first_candle,
+            Pattern.pattern_last_candle,
+            Pattern.is_active,
         )
+
+        if symbol_id:
+            q = q.where(Pattern.symbol_id == symbol_id)
+
+        if time_frame:
+            q = q.where(Pattern.time_frame == time_frame)
 
         result = self.session.execute(q)
 
-        df = pd.DataFrame(result, columns=[key for key in result.keys()])
-
-        return df
+        return pd.DataFrame(result.fetchall(), columns=result.keys())

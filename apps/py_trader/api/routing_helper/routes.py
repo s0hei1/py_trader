@@ -17,3 +17,7 @@ class Routes:
         ReadMany: ClassVar[str] = '/read_many'
         Update: ClassVar[str] = '/update'
 
+    class Symbol:
+        PREFIX: ClassVar[str] = '/symbol'
+        Create: ClassVar[str] = '/create'
+        ReadMany: ClassVar[str] = '/read_many'
