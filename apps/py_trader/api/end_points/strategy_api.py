@@ -8,7 +8,7 @@ from apps.py_trader.service.strategy.strategy_schema import StrategyCreate, Stra
 strategy_api = APIRouter(prefix= Routes.Strategy.PREFIX, tags=['Strategy'])
 
 
-@strategy_api.post(path=Routes.Strategy.Create, response_model=StrategyCreate)
+@strategy_api.post(path=Routes.Strategy.Create, response_model=StrategyRead)
 async def create_strategy(
         strategy_create : StrategyCreate,
         strategy_repo : StrategyRepo = Depends(Container.strategy_repo)

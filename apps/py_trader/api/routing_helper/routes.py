@@ -21,3 +21,17 @@ class Routes:
         PREFIX: ClassVar[str] = '/symbol'
         Create: ClassVar[str] = '/create'
         ReadMany: ClassVar[str] = '/read_many'
+
+
+    class Pattern:
+        PREFIX: ClassVar[str] = '/symbol'
+        Create: ClassVar[str] = '/create_one'
+        CreateMany: ClassVar[str] = '/create_many'
+        CreateGroup: ClassVar[str] = '/create_many'
+
+        ReadOne: ClassVar[str] = '/read_one'
+        ReadMany: ClassVar[str] = '/read_many'
+        ReadOneGroup: ClassVar[str] = '/read_one_group'
+        ReadManyGroups: ClassVar[str] = '/read_many_groups'
+
+

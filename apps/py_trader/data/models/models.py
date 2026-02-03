@@ -36,6 +36,7 @@ class Strategy(Base):
     strategy_type : Mapped[StrategyType]
 
 
+
 #
 # class TradingPlatform(Base):
 #     __tablename__ = 'trading_platforms'
@@ -81,7 +82,7 @@ class Pattern(Base):
     time_frame : Mapped[TimeFrameEnum]
     symbol_id : Mapped[int] = mapped_column(ForeignKey('symbols.id'))
 
-    symbol : Mapped[Symbols] = relationship()
+    symbol : Mapped[Symbol] = relationship()
     pattern_group: Mapped[PatternGroup] = relationship(back_populates="patterns")
 
 #
@@ -100,3 +101,6 @@ class Pattern(Base):
 #     external_id : Mapped[int] = mapped_column(primary_key=True)
 #
 #
+
+
+

@@ -1,7 +1,7 @@
 from typing import Sequence
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from third_party.candlestic import Symbol
+from apps.py_trader.data.models.models import Symbol
 
 class SymbolRepo:
 
@@ -19,3 +19,4 @@ class SymbolRepo:
     async def read_many(self) -> Sequence[Symbol]:
         result = await self.session.execute(select(Symbol))
         return result.scalars().all()
+
