@@ -3,6 +3,7 @@ from fastapi import Depends
 from apps.py_trader.data.db.db import get_db
 from apps.py_trader.data.repository.config_repo import ConfigRepo
 from apps.py_trader.data.repository.flags_repo import FlagsRepo
+from apps.py_trader.data.repository.pattern_repo import PatternRepo
 from apps.py_trader.data.repository.strategy_repo import StrategyRepo
 from apps.py_trader.data.repository.symbol_repo import SymbolRepo
 
@@ -28,4 +29,8 @@ class Container(object):
     @classmethod
     def symbol_repo(cls, db = Depends(get_db)) -> SymbolRepo:
         return SymbolRepo(db)
+
+    @classmethod
+    def pattern_repo(cls, db = Depends(get_db)) -> PatternRepo:
+        return PatternRepo(db)
 
