@@ -1,5 +1,6 @@
 from typing import Sequence
 from sqlalchemy import select, exists
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 import datetime as dt
 import pandas as pd
@@ -10,7 +11,7 @@ from apps.py_trader.data.models.models import Pattern
 
 class PatternRepo:
 
-    def __init__(self, session: Session):
+    def __init__(self, session: AsyncSession):
         self.session = session
 
     def read_many(
@@ -56,7 +57,7 @@ class PatternRepo:
 
         return result.first() if return_first else result.all()
 
-    def create(self, pattern: Pattern) -> Pattern:
+    async def create(self, pattern: Pattern) -> Pattern:
 
         if pattern.pattern_first_candle >= pattern.pattern_last_candle:
             raise ValueError("pattern_first_candle must be earlier than pattern_last_candle")
@@ -71,12 +72,12 @@ class PatternRepo:
             )
         )
 
-        if self.session.execute(q).scalar():
+        if (await self.session.execute(q)).scalar():
             raise ValueError("Pattern already exists")
 
         self.session.add(pattern)
-        self.session.commit()
-        self.session.refresh(pattern)
+        await self.session.commit()
+        await self.session.refresh(pattern)
 
         return pattern
 
