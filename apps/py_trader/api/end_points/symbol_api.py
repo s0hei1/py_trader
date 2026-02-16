@@ -6,7 +6,7 @@ from apps.py_trader.service.symbol.symbol_schema import SymbolCreate, SymbolRead
 
 symbol_api = APIRouter(prefix= Routes.Symbol.PREFIX, tags=['Symbol'])
 
-@symbol_api.post(path=Routes.Symbol.Create, response_model=SymbolRead)
+@symbol_api.post(path=Routes.Symbol.CreateOne, response_model=SymbolRead)
 async def create_symbol(
         symbol_create : SymbolCreate,
         symbol_repo : SymbolRepo = Depends(Container.symbol_repo)

@@ -19,7 +19,7 @@ class Routes:
 
     class Symbol:
         PREFIX: ClassVar[str] = '/symbol'
-        Create: ClassVar[str] = '/create'
+        CreateOne: ClassVar[str] = '/create_one'
         ReadMany: ClassVar[str] = '/read_many'
 
 
