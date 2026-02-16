@@ -2,6 +2,9 @@ import os
 from typing import AnyStr
 import sys
 
+from apps.py_trader.api.exception_handler.value_error_handler import value_error_exception_handler
+
+
 def get_current_path_parent(path: AnyStr, depth=1):
     if depth == 0:
         return path
@@ -24,4 +27,6 @@ app.include_router(strategy_api)
 app.include_router(symbol_api)
 app.include_router(pattern_api)
 
+
+app.add_exception_handler(ValueError, value_error_exception_handler)
 

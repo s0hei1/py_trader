@@ -64,6 +64,10 @@ class Symbol(Base):
     base_currency : Mapped[str]
     quote_currency : Mapped[str]
 
+
+    def __str__(self):
+        return f'{self.base_currency}{self.quote_currency}'
+
 class PatternGroup(Base):
     __tablename__ = 'pattern_groups'
     id : Mapped[int] = mapped_column(primary_key=True)
