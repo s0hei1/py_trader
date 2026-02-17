@@ -235,7 +235,7 @@ class PatternTradingVM:
         place_order.pattern_id = self.selected_pattern
         place_order.order_ticket = int(result.result.order)
 
-        self.place_order_repo.create(place_order)
+        self.place_order_repo.create_one(place_order)
 
         return result
 
@@ -250,7 +250,7 @@ class PatternTradingVM:
 
     def add_pattern(self) -> VMResult:
         try:
-            pattern = self.pattern_repo.create(
+            pattern = self.pattern_repo.create_one(
                 Pattern(
                     pattern_start_date_time= datetime.combine(self._pattern_start_date, self._pattern_end_time),
                     pattern_end_date_time= datetime.combine(self._pattern_end_date, self._pattern_end_time),

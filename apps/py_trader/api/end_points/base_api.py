@@ -10,7 +10,7 @@ from apps.py_trader.service.base.flags_schema import FlagsRead
 base_api = APIRouter(prefix= Routes.Base.PREFIX, tags=['Base'])
 
 @base_api.get(path=Routes.Base.FlagsRead, response_model=FlagsRead)
-async def read_flags(flags_repo : FlagsRepo = Depends(Container.flags_repo)) -> FlagsRead:
+async def read_flags(flags_repo : FlagsRepo = Depends(Container.flags_repo)):
 
     response = await flags_repo.get_or_config_flags()
 
@@ -20,9 +20,9 @@ async def read_flags(flags_repo : FlagsRepo = Depends(Container.flags_repo)) -> 
 @base_api.post(path=Routes.Base.ConfigCreate, response_model=ConfigRead)
 async def create_config(config : ConfigCreate, config_repo : ConfigRepo = Depends(Container.configs_repo)):
 
-    config = await config_repo.create_config(config.to_config())
+    response = await config_repo.create_config(config.to_config())
 
-    return config
+    return response
 
 
 @base_api.get(path=Routes.Base.ConfigReadLast, response_model=ConfigRead)

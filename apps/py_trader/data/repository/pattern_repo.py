@@ -6,7 +6,7 @@ import datetime as dt
 import pandas as pd
 
 from apps.py_trader.data.enums.times_frame_enum import TimeFrameEnum
-from apps.py_trader.data.models.models import Pattern
+from apps.py_trader.data.models.models import Pattern, PatternGroup
 
 
 class PatternRepo:
@@ -57,7 +57,7 @@ class PatternRepo:
 
         return result.first() if return_first else result.all()
 
-    async def create(self, pattern: Pattern) -> Pattern:
+    async def create_one(self, pattern: Pattern) -> Pattern:
 
         if pattern.pattern_first_candle >= pattern.pattern_last_candle:
             raise ValueError("pattern_first_candle must be earlier than pattern_last_candle")
@@ -117,3 +117,15 @@ class PatternRepo:
         result = self.session.execute(q)
 
         return pd.DataFrame(result.fetchall(), columns=result.keys())
+
+    async def create_one_group(self, group: PatternGroup) -> PatternGroup:
+        self.session.add(group)
+
+        await self.session.commit()
+        await self.session.refresh(group)
+
+        return group
+
+    async def read_many_groups(self) -> Sequence[PatternGroup]:
+        result = await self.session.execute(select(PatternGroup))
+        return result.scalars().all()

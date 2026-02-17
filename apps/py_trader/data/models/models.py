@@ -71,7 +71,7 @@ class Symbol(Base):
 class PatternGroup(Base):
     __tablename__ = 'pattern_groups'
     id : Mapped[int] = mapped_column(primary_key=True)
-    name : Mapped[str]
+    name : Mapped[str] = mapped_column(unique=True)
     is_active : Mapped[bool] = mapped_column(default=True)
 
     patterns: Mapped[List[Pattern]] = relationship(back_populates="pattern_group")

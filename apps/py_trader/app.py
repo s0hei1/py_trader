@@ -2,6 +2,9 @@ import os
 from typing import AnyStr
 import sys
 
+from sqlalchemy.exc import DatabaseError
+
+from apps.py_trader.api.exception_handler.sqlalchemy_errors_handler import database_exceptions
 from apps.py_trader.api.exception_handler.value_error_handler import value_error_exception_handler
 
 
@@ -29,4 +32,5 @@ app.include_router(pattern_api)
 
 
 app.add_exception_handler(ValueError, value_error_exception_handler)
+app.add_exception_handler(DatabaseError, database_exceptions)
 

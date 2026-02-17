@@ -1,8 +1,10 @@
 import pytest
 from httpx import AsyncClient
+from sqlalchemy.exc import IntegrityError
+
 from apps.py_trader.api.routing_helper.routes import Routes
 from global_fixture import app, async_client
-
+from random import randint
 
 @pytest.fixture
 def pattern() -> dict:
@@ -15,6 +17,14 @@ def pattern() -> dict:
         "symbol_id": 1
     }
 
+@pytest.fixture
+def pattern_group() -> dict:
+    return {
+        "name": f"pivot{randint(1, 1000)}",
+        "is_active": True,
+    }
+
+
 @pytest.mark.asyncio
 async def test_create_pattern_successfully(
         async_client: AsyncClient,
@@ -22,4 +32,43 @@ async def test_create_pattern_successfully(
 ):
     response = await async_client.post(Routes.Pattern.PREFIX + Routes.Pattern.Create, json=pattern)
     response.raise_for_status()
+
+@pytest.mark.asyncio
+async def test_create_pattern_group_successfully(
+        async_client: AsyncClient,
+        pattern_group: dict
+):
+    response = await async_client.post(Routes.Pattern.PREFIX + Routes.Pattern.CreateGroup, json=pattern_group)
+    response.raise_for_status()
+
+    assert 'id' in response.json()
+
+
+@pytest.mark.asyncio
+async def test_crate_pattern_group_with_same_name_should_raise_exception(
+        async_client: AsyncClient,
+        pattern_group: dict
+):
+    response = await async_client.post(Routes.Pattern.PREFIX + Routes.Pattern.CreateGroup, json=pattern_group)
+    response.raise_for_status()
+
+    response_duplicate = await async_client.post(Routes.Pattern.PREFIX + Routes.Pattern.CreateGroup, json=pattern_group)
+    assert response_duplicate.status_code == 400
+    print(response_duplicate.json())
+
+@pytest.mark.asyncio
+async def test_read_many_pattern_groups(
+        async_client: AsyncClient,
+):
+    response = await async_client.get(Routes.Pattern.PREFIX + Routes.Pattern.ReadManyGroups)
+    response.raise_for_status()
+
+    assert isinstance(response.json(), list)
+
+
+
+
+
+
+
 

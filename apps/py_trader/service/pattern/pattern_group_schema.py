@@ -1,8 +1,8 @@
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict, model_validator,Field
 from apps.py_trader.data.enums.times_frame_enum import TimeFrameEnum
-from apps.py_trader.data.models.models import Pattern
-
+from apps.py_trader.data.models.models import Pattern, PatternGroup
+from typing import Annotated
 
 class PatternRead(BaseModel):
     id: int
@@ -14,6 +14,13 @@ class PatternRead(BaseModel):
     time_frame: TimeFrameEnum
     symbol_id: int
     symbol_name: int
+
+    model_config = ConfigDict(from_attributes=True)
+
+class PatternGroupRead(BaseModel):
+    id: int
+    name: str
+    is_active: bool
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -45,3 +52,15 @@ class PatternCreate(BaseModel):
             time_frame=self.time_frame,
             symbol_id=self.symbol_id,
         )
+
+class PatternGroupCreate(BaseModel):
+    name: Annotated[str, Field(max_length=16, min_length=1)]
+    is_active: bool
+
+    def to_pattern_group(self) -> PatternGroup:
+        return PatternGroup(
+            name=self.name,
+            is_active=self.is_active,
+        )
+
+
