@@ -24,7 +24,7 @@ class Routes:
 
 
     class Pattern:
-        PREFIX: ClassVar[str] = '/symbol'
+        PREFIX: ClassVar[str] = '/pattern'
         Create: ClassVar[str] = '/create_one'
         CreateMany: ClassVar[str] = '/create_many'
         CreateGroup: ClassVar[str] = '/create_many'

@@ -10,8 +10,8 @@ from random import randint
 def pattern() -> dict:
     return {
         "pattern_group_id": 1,
-        "pattern_first_candle": "2026-02-11T20:33:24.309Z",
-        "pattern_last_candle": "2026-02-12T20:33:24.309Z",
+        "pattern_first_candle": "2026-02-12T20:33:24.309Z",
+        "pattern_last_candle": "2026-02-19T20:33:24.309Z",
         "is_active": True,
         "time_frame": "m1",
         "symbol_id": 1

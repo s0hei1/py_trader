@@ -1,3 +1,4 @@
+from __future__ import annotations
 from datetime import datetime
 from pydantic import BaseModel, ConfigDict, model_validator,Field
 from apps.py_trader.data.enums.times_frame_enum import TimeFrameEnum
@@ -7,15 +8,28 @@ from typing import Annotated
 class PatternRead(BaseModel):
     id: int
     pattern_group_id: int
-    pattern_group_name: int
     pattern_first_candle: datetime
     pattern_last_candle: datetime
     is_active: bool
     time_frame: TimeFrameEnum
     symbol_id: int
-    symbol_name: int
 
     model_config = ConfigDict(from_attributes=True)
+    #
+    # @classmethod
+    # def from_pattern(cls) -> PatternRead:
+    #     return cls(
+    #         id
+    #     pattern_group_id
+    #     pattern_group_name
+    #     pattern_first_candle
+    #     pattern_last_candle
+    #     is_active
+    #     time_frame
+    #     symbol_id
+    #     symbol_name
+    #     )
+    #
 
 class PatternGroupRead(BaseModel):
     id: int
