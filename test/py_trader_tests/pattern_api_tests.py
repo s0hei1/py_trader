@@ -1,7 +1,5 @@
 import pytest
 from httpx import AsyncClient
-from sqlalchemy.exc import IntegrityError
-
 from apps.py_trader.api.routing_helper.routes import Routes
 from global_fixture import app, async_client
 from random import randint
