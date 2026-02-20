@@ -9,6 +9,7 @@ from more_itertools import first
 
 @dataclass
 class OrderType:
+    id : int
     base_type: Literal['BUY', 'SELL']
     name: str
     mt5_type: int
@@ -21,8 +22,8 @@ class OrderType:
 
 
 class OrderTypes:
-    buy_limit: ClassVar[OrderType] = OrderType(base_type="BUY", name="Buy Limit", mt5_type=mt5.ORDER_TYPE_BUY_LIMIT)
-    sell_limit: ClassVar[OrderType] = OrderType(base_type="SELL", name="Sell Limit", mt5_type=mt5.ORDER_TYPE_SELL_LIMIT)
+    buy_limit: ClassVar[OrderType] = OrderType(id = 1,base_type="BUY", name="Buy Limit", mt5_type=mt5.ORDER_TYPE_BUY_LIMIT)
+    sell_limit: ClassVar[OrderType] = OrderType(id = 2, base_type="SELL", name="Sell Limit", mt5_type=mt5.ORDER_TYPE_SELL_LIMIT)
 
     @classmethod
     def get_order_types(cls) -> list[OrderType]:

@@ -65,11 +65,10 @@ class ClassicFractalTimeFrames:
         return cls._trigger_time_dict[time_frame]
 
 
-
 class DefaultSymbols:
-    eur_usd : Symbol = Symbol("EUR", "USD", 4)
-    btc_usd : Symbol = Symbol("BTC", "USD", 0)
-    gbp_usd : Symbol = Symbol("GBP", "USD", 4,suffix='b')
+    eur_usd: Symbol = Symbol(1, "EUR", "USD", 4)
+    btc_usd: Symbol = Symbol(2, "BTC", "USD", 0)
+    gbp_usd: Symbol = Symbol(3, "GBP", "USD", 4, suffix='b')
 
     @classmethod
     def get_symbols(cls) -> list[Symbol]:
@@ -86,4 +85,3 @@ class DefaultSymbols:
     @classmethod
     def get_symbols_name(cls) -> list[str]:
         return [i.symbol_name for i in cls.get_symbols()]
-

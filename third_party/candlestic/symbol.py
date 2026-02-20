@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Symbol:
+    id : int
     base_currency: str
     quote_currency: str
     decimal_places : int
@@ -11,10 +12,11 @@ class Symbol:
     prefix: str = ''
     suffix: str = ''
 
-    def __init__(self, base_currency: str, quote_currency: str, decimal_places : int, /, alias_names: list[str] | None = None,
+    def __init__(self,id : int, base_currency: str, quote_currency: str, decimal_places : int, /, alias_names: list[str] | None = None,
                  prefix: str = '',
                  suffix: str = '',
                  ):
+        self.id = id
         self.base_currency = base_currency
         self.quote_currency = quote_currency
         self.alias_names = alias_names
