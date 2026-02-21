@@ -2,10 +2,11 @@ from __future__ import annotations
 from typing import List
 from sqlalchemy import DateTime, ForeignKey, String, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from datetime import datetime,UTC
+from datetime import datetime, UTC
 from apps.py_trader.data.enums.platform_type import PlatformType
 from apps.py_trader.data.enums.strategy_type import StrategyType
 from apps.py_trader.data.enums.times_frame_enum import TimeFrameEnum
+from third_party.candlestic import symbol
 
 
 class Base(DeclarativeBase):
@@ -15,26 +16,26 @@ class Base(DeclarativeBase):
 class Flags(Base):
     __tablename__ = 'flags'
 
-    id : Mapped[int] = mapped_column(primary_key=True, autoincrement=False)
-    is_first_run : Mapped[bool] = mapped_column(default=False)
-    is_development : Mapped[bool]
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=False)
+    is_first_run: Mapped[bool] = mapped_column(default=False)
+    is_development: Mapped[bool]
 
 
 class Config(Base):
     __tablename__ = 'configs'
-    id : Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     creation_datetime: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    maximum_risk_percentage : Mapped[float] = mapped_column(default=1.0)
-    default_risk_percentage : Mapped[float] = mapped_column(default=1.0)
-    total_balance : Mapped[float] = mapped_column(default=0.0)
+    maximum_risk_percentage: Mapped[float] = mapped_column(default=1.0)
+    default_risk_percentage: Mapped[float] = mapped_column(default=1.0)
+    total_balance: Mapped[float] = mapped_column(default=0.0)
+
 
 class Strategy(Base):
     __tablename__ = 'strategies'
 
-    id : Mapped[int] = mapped_column(primary_key=True)
-    strategy_name : Mapped[str]
-    strategy_type : Mapped[StrategyType]
-
+    id: Mapped[int] = mapped_column(primary_key=True)
+    strategy_name: Mapped[str]
+    strategy_type: Mapped[StrategyType]
 
 
 #
@@ -60,33 +61,47 @@ class Strategy(Base):
 
 class Symbol(Base):
     __tablename__ = 'symbols'
-    id : Mapped[int] = mapped_column(primary_key=True)
-    base_currency : Mapped[str]
-    quote_currency : Mapped[str]
+    id: Mapped[int] = mapped_column(primary_key=True)
+    base_currency: Mapped[str]
+    quote_currency: Mapped[str]
+    decimal_places: Mapped[int]
+    prefix: Mapped[str | None]
+    suffix: Mapped[str | None]
 
+    def to_symbol(self) -> symbol.Symbol:
+        return symbol.Symbol(
+            self.id,
+            self.base_currency,
+            self.quote_currency,
+            self.decimal_places,
+            prefix= self.prefix if self.prefix is not None else '',
+            suffix=self.suffix if self.suffix is not None else '',
+        )
 
     def __str__(self):
         return f'{self.base_currency}{self.quote_currency}'
 
+
 class PatternGroup(Base):
     __tablename__ = 'pattern_groups'
-    id : Mapped[int] = mapped_column(primary_key=True)
-    name : Mapped[str] = mapped_column(unique=True)
-    is_active : Mapped[bool] = mapped_column(default=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(unique=True)
+    is_active: Mapped[bool] = mapped_column(default=True)
 
     patterns: Mapped[List[Pattern]] = relationship(back_populates="pattern_group")
 
+
 class Pattern(Base):
     __tablename__ = 'patterns'
-    id : Mapped[int] = mapped_column(primary_key=True)
-    pattern_group_id : Mapped[int] = mapped_column(ForeignKey('pattern_groups.id'))
-    pattern_first_candle : Mapped[datetime] = mapped_column(DateTime(timezone=True))
-    pattern_last_candle : Mapped[datetime] = mapped_column(DateTime(timezone=True))
-    is_active : Mapped[bool] = mapped_column(default=True)
-    time_frame : Mapped[TimeFrameEnum]
-    symbol_id : Mapped[int] = mapped_column(ForeignKey('symbols.id'))
+    id: Mapped[int] = mapped_column(primary_key=True)
+    pattern_group_id: Mapped[int] = mapped_column(ForeignKey('pattern_groups.id'))
+    pattern_first_candle: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    pattern_last_candle: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    is_active: Mapped[bool] = mapped_column(default=True)
+    time_frame: Mapped[TimeFrameEnum]
+    symbol_id: Mapped[int] = mapped_column(ForeignKey('symbols.id'))
 
-    symbol : Mapped[Symbol] = relationship()
+    symbol: Mapped[Symbol] = relationship()
     pattern_group: Mapped[PatternGroup] = relationship(back_populates="patterns")
 
 #
@@ -105,6 +120,3 @@ class Pattern(Base):
 #     external_id : Mapped[int] = mapped_column(primary_key=True)
 #
 #
-
-
-

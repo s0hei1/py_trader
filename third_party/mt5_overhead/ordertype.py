@@ -1,7 +1,5 @@
 from __future__ import annotations
-from enum import Enum
 from typing import ClassVar, Literal
-from enum import Enum
 import MetaTrader5 as mt5
 from dataclasses import dataclass
 from more_itertools import first
@@ -39,6 +37,10 @@ class OrderTypes:
         return [i.name for i in self.get_order_types()]
 
     @classmethod
-    def get_type_by_name(self, input_name: str) -> OrderType:
-        return first([i for i in self.get_order_types() if i.name == input_name])
+    def get_type_by_name(cls, input_name: str) -> OrderType:
+        return first([i for i in cls.get_order_types() if i.name == input_name])
+
+    @classmethod
+    def get_order_type_by_id(cls, id: int) -> OrderType:
+        return first([i for i in cls.get_order_types() if i.id == id], default=None)
 
