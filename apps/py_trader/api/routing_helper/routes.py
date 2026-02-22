@@ -34,4 +34,10 @@ class Routes:
         ReadOneGroup: ClassVar[str] = '/read_one_group'
         ReadManyGroups: ClassVar[str] = '/read_many_groups'
 
+    class Trading:
+        PREFIX: ClassVar[str] = '/trading'
+
+        CreatePlaceOrderRequest: ClassVar[str] = '/create_place_order_request'
+
+        ReadOnePlaceOrderRequest: ClassVar[str] = '/read_one_place_order_request'
 

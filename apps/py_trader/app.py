@@ -2,12 +2,6 @@ import os
 from typing import AnyStr
 import sys
 
-from sqlalchemy.exc import DatabaseError
-
-from apps.py_trader.api.exception_handler.sqlalchemy_errors_handler import database_exceptions
-from apps.py_trader.api.exception_handler.value_error_handler import value_error_exception_handler
-
-
 def get_current_path_parent(path: AnyStr, depth=1):
     if depth == 0:
         return path
@@ -22,13 +16,18 @@ from apps.py_trader.api.end_points.base_api import base_api
 from apps.py_trader.api.end_points.strategy_api import strategy_api
 from apps.py_trader.api.end_points.symbol_api import symbol_api
 from apps.py_trader.api.end_points.pattern_api import pattern_api
+from apps.py_trader.api.end_points.trading_api import trading_api
 
+from sqlalchemy.exc import DatabaseError
+from apps.py_trader.api.exception_handler.sqlalchemy_errors_handler import database_exceptions
+from apps.py_trader.api.exception_handler.value_error_handler import value_error_exception_handler
 app = FastAPI()
 
 app.include_router(base_api)
 app.include_router(strategy_api)
 app.include_router(symbol_api)
 app.include_router(pattern_api)
+app.include_router(trading_api)
 
 
 app.add_exception_handler(ValueError, value_error_exception_handler)

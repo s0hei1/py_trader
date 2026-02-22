@@ -1,8 +1,7 @@
 from pydantic import BaseModel
 
 
-
-def PlaceOrderRequest():
+class PlaceOrderRequestCreate(BaseModel):
     order_type_id : int
     symbol_id : int
     volume : float
@@ -11,6 +10,6 @@ def PlaceOrderRequest():
     take_profit : float
     magic_id : int
 
-def PlaceOrderRequestResponse():
+class PlaceOrderRequestRead(BaseModel):
     place_status : bool
     order_mt5_id : int
