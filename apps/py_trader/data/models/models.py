@@ -1,9 +1,11 @@
 from __future__ import annotations
 from typing import List
-from sqlalchemy import DateTime, ForeignKey, String, func
+from sqlalchemy import DateTime, ForeignKey, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from datetime import datetime, UTC
-from apps.py_trader.data.enums.platform_type import PlatformType
+from datetime import datetime
+
+from apps.py_trader.data.enums.order_types_enum import OrderTypeEnum
+from apps.py_trader.data.enums.place_order_status import PlaceOrderStatus
 from apps.py_trader.data.enums.strategy_type import StrategyType
 from apps.py_trader.data.enums.times_frame_enum import TimeFrameEnum
 from third_party.candlestic import symbol
@@ -103,6 +105,35 @@ class Pattern(Base):
 
     symbol: Mapped[Symbol] = relationship()
     pattern_group: Mapped[PatternGroup] = relationship(back_populates="patterns")
+
+
+class PlaceOrderRequestDoc(Base):
+    __tablename__ = 'place_order_request_docs'
+    id: Mapped[int] = mapped_column(primary_key=True)
+    document_code : Mapped[int] = mapped_column(unique=True, index=True)
+    creation_datetime: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    place_status : Mapped[PlaceOrderStatus]
+    trading_platform : Mapped[str | None]
+
+    entry_price : Mapped[float]
+    stop_loss_price : Mapped[float]
+    take_profit_price : Mapped[float]
+    volume : Mapped[float]
+    expected_comision : Mapped[float]
+    risk_percentage : Mapped[float]
+
+    order_type : Mapped[OrderTypeEnum]
+    order_type_name : Mapped[str]
+
+    symbol_id: Mapped[int] = mapped_column(ForeignKey('symbols.id'))
+    symbol_name : Mapped[str]
+
+    time_frame : Mapped[TimeFrameEnum]
+
+    strategy_id : Mapped[int] = mapped_column(ForeignKey('strategies.id'))
+    strategy_name : Mapped[str]
+
+    is_lock : Mapped[bool] = mapped_column(default=False)
 
 #
 #
