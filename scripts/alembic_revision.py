@@ -15,7 +15,6 @@ def main():
     migrations_dir = Path(__file__).parent.parent / "apps" / "py_trader" / "data" / "migrations"
 
     add_migrations = [
-
         "alembic", "revision",
         "--autogenerate",
         "-m", message

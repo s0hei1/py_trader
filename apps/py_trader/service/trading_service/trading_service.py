@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from apps.py_trader.data.models.models import PlaceOrderRequestDoc
 from apps.py_trader.service.trading_service.trading_schema import PlaceOrderRequestCreate
 from third_party import mt5_overhead
 
@@ -9,9 +10,13 @@ class TradingService:
         self.session = session
 
 
-    def place_order(self, request : PlaceOrderRequestCreate):
+    def generate_place_order_request_doc(self, request : PlaceOrderRequestCreate) -> PlaceOrderRequestDoc:
 
 
 
-        mt5_overhead.set_pending_order()
+
+
+        return PlaceOrderRequestDoc(
+
+        )
 

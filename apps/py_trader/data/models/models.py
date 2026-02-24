@@ -66,7 +66,7 @@ class Symbol(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     base_currency: Mapped[str]
     quote_currency: Mapped[str]
-    decimal_places: Mapped[int]
+    decimal_places: Mapped[int | None]
     prefix: Mapped[str | None]
     suffix: Mapped[str | None]
 
@@ -119,7 +119,7 @@ class PlaceOrderRequestDoc(Base):
     stop_loss_price : Mapped[float]
     take_profit_price : Mapped[float]
     volume : Mapped[float]
-    expected_comision : Mapped[float]
+    expected_commission : Mapped[float]
     risk_percentage : Mapped[float]
 
     order_type : Mapped[OrderTypeEnum]
@@ -133,7 +133,13 @@ class PlaceOrderRequestDoc(Base):
     strategy_id : Mapped[int] = mapped_column(ForeignKey('strategies.id'))
     strategy_name : Mapped[str]
 
-    is_lock : Mapped[bool] = mapped_column(default=False)
+    pattern_id : Mapped[int | None] = mapped_column(ForeignKey('patterns.id'))
+
+    is_locked : Mapped[bool] = mapped_column(default=False)
+
+    strategy: Mapped[Strategy] = relationship(back_populates="strategies")
+    symbol: Mapped[Symbol] = relationship(back_populates="symbols")
+    pattern : Mapped[Pattern | None] = relationship(back_populates="patterns")
 
 #
 #

@@ -6,6 +6,7 @@ from apps.py_trader.data.repository.flags_repo import FlagsRepo
 from apps.py_trader.data.repository.pattern_repo import PatternRepo
 from apps.py_trader.data.repository.strategy_repo import StrategyRepo
 from apps.py_trader.data.repository.symbol_repo import SymbolRepo
+from apps.py_trader.service.trading_service.trading_service import TradingService
 
 
 class Container(object):
@@ -33,4 +34,9 @@ class Container(object):
     @classmethod
     def pattern_repo(cls, db = Depends(get_db)) -> PatternRepo:
         return PatternRepo(db)
+
+    @classmethod
+    def trading_service(cls, db = Depends(get_db)):
+        return TradingService(db)
+
 
