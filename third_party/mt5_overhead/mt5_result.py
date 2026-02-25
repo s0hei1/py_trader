@@ -20,6 +20,10 @@ class Mt5Result(Generic[T]):
     result_code : int
     result : T | None
 
+    @property
+    def is_success(self) -> bool:
+        return not self.has_error
+
 @dataclass
 class LastTickResult():
     bid : float

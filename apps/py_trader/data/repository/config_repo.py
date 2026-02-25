@@ -16,9 +16,12 @@ class ConfigRepo:
         await self.session.refresh(config)
         return config
 
-    async def read_last_config(self) -> Config | None:
+    async def read_last_config(self, raise_if_none : bool = False) -> Config | None:
         q = select(Config).order_by(Config.creation_datetime.desc()).limit(1)
         config = (await self.session.execute(q)).scalars().first()
+
+        if config is None and raise_if_none:
+            raise ValueError('There is no config for trading! please insert a config')
 
         return config
 

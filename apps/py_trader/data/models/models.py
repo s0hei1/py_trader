@@ -70,7 +70,7 @@ class Symbol(Base):
     prefix: Mapped[str | None]
     suffix: Mapped[str | None]
 
-    def to_symbol(self) -> symbol.Symbol:
+    def to_thirdparty_symbol(self) -> symbol.Symbol:
         return symbol.Symbol(
             self.id,
             self.base_currency,
@@ -141,6 +141,8 @@ class PlaceOrderRequestDoc(Base):
     symbol: Mapped[Symbol] = relationship(back_populates="symbols")
     pattern : Mapped[Pattern | None] = relationship(back_populates="patterns")
 
+# class TradeJournalDoc:
+#
 #
 #
 # #DocTable Trading Scope
