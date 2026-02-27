@@ -10,6 +10,7 @@ from third_party import mt5_overhead
 
 class TradingService:
 
+
     def __init__(self, session: AsyncSession, time_service: TimeService):
         self.session = session
         self.time_service = time_service
