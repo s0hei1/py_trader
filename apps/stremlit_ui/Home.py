@@ -18,14 +18,12 @@ st.set_page_config(
     page_icon="👋",
 )
 
-st.write("Welcome to Palaz Bi Demo Application! 👋",)
+st.write("Welcome to PY Trader UI Prototype! 👋",)
 
 st.sidebar.success("Select a dashboard above.")
 
 st.markdown(
     """
-    This is an example for showing some reports from PALAZ Company
-    
-    You can select the dashboards on right side and see interactive reports !
+    This is a prototype UI App for PY Trader Services :D
     """
 )
