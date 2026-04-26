@@ -12,7 +12,7 @@ def main():
             print("❌ Migration message cannot be empty.")
             sys.exit(1)
 
-    migrations_dir = Path(__file__).parent.parent / "apps" / "py_trader" / "data" / "migrations"
+    migrations_dir = Path(__file__).parent.parent / "apps" / "market_data" / "data" / "migrations"
 
     add_migrations = [
         "alembic", "revision",

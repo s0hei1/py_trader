@@ -1,6 +1,7 @@
 
 
 
+
 class StaticRiskManager:
 
     def __init__(self,balance : float, risk_size : float):

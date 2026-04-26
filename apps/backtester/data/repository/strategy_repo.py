@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from apps.backtester.data.models.models import Strategy
 
 
-class StrategyRepository:
+class StrategyRepo:
 
     def __init__(self, session: AsyncSession):
         self.session = session

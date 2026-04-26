@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, AsyncEngine
 from sqlalchemy.orm import sessionmaker
-from apps.py_trader.data.config.settings import Settings
-from apps.py_trader.data.db.read_only_async_session import ReadOnlyAsyncSession
+from apps.market_data.data.config.settings import Settings
+from apps.market_data.data.db.read_only_async_session import ReadOnlyAsyncSession
 
 def get_engine(url=Settings().database_url) -> AsyncEngine:
 

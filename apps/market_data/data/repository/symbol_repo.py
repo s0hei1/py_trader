@@ -1,7 +1,7 @@
 from typing import Sequence
 from sqlalchemy import select, exists
 from sqlalchemy.ext.asyncio import AsyncSession
-from apps.py_trader.data.models.models import Symbol
+from apps.market_data.data.models.models import Symbol
 
 class SymbolRepo:
 
@@ -12,7 +12,7 @@ class SymbolRepo:
 
         q = select(
             exists().
-            where(Symbol.base_currency == symbol.base_currency, Symbol.quote_currency == symbol.quote_currency)
+            where(Symbol.name == symbol.name)
         )
 
         is_symbol_duplicate = (await self.session.execute(q)).scalar()

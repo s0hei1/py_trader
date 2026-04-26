@@ -1,13 +1,8 @@
-from apps.py_trader.data.config.settings import Settings
+from apps.market_data.data.config.settings import Settings
 from fastapi import Depends
-from apps.py_trader.data.db.db import get_db
-from apps.py_trader.data.repository.config_repo import ConfigRepo
-from apps.py_trader.data.repository.flags_repo import FlagsRepo
-from apps.py_trader.data.repository.pattern_repo import PatternRepo
-from apps.py_trader.data.repository.place_order_request_doc_repo import PlaceOrderRequestDocRepo
-from apps.py_trader.data.repository.strategy_repo import StrategyRepo
-from apps.py_trader.data.repository.symbol_repo import SymbolRepo
-from apps.py_trader.service.trading_service.trading_service import TradingService
+from apps.market_data.data.db.db import get_db
+from apps.market_data.data.repository import BrokerRepo,CandleRepo,FlagsRepo,SymbolRepo,TimeFrameRepo
+
 
 
 class Container(object):
@@ -21,27 +16,17 @@ class Container(object):
         return FlagsRepo(db)
 
     @classmethod
-    def configs_repo(cls, db = Depends(get_db)) -> ConfigRepo:
-        return ConfigRepo(db)
+    def broker_repo(cls, db = Depends(get_db)) -> BrokerRepo:
+        return BrokerRepo(db)
 
     @classmethod
-    def strategy_repo(cls, db = Depends(get_db)) -> StrategyRepo:
-        return StrategyRepo(db)
+    def candle_repo(cls, db = Depends(get_db)) -> CandleRepo:
+        return CandleRepo(db)
 
     @classmethod
     def symbol_repo(cls, db = Depends(get_db)) -> SymbolRepo:
         return SymbolRepo(db)
 
     @classmethod
-    def pattern_repo(cls, db = Depends(get_db)) -> PatternRepo:
-        return PatternRepo(db)
-
-    @classmethod
-    def trading_service(cls, db = Depends(get_db)):
-        return TradingService(db)
-
-    @classmethod
-    def place_order_request_doc_repo(cls, db = Depends(get_db)):
-        return PlaceOrderRequestDocRepo(db)
-
-
+    def time_frame_repo(cls, db = Depends(get_db)) -> TimeFrameRepo:
+        return TimeFrameRepo(db)

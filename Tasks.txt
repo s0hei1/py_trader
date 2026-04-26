@@ -1,5 +1,6 @@
 
 
-# T1 => Implement Flags Page in ui app - and implement it in Backend Side for managing Flags Side
-# T2 => Implement Requesting Orders
-# T3 => Implement Pattern Trading
+# T1 => Implement Save Backtest Statement
+# T2 => Implement Statement List With Ordering!
+# T3 => Start to use for 1 Week (Implement 5 new Strategies)
+# T4 => Implement BackTest on multiple Data Feeds !!! (Cluster Backtest)

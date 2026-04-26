@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from apps.backtester.data.models.models import RiskManagement
 
-class RiskManagementRepository:
+class RiskManagementRepo:
 
     def __init__(self, session: AsyncSession):
         self.session = session

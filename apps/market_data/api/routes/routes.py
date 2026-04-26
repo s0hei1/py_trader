@@ -6,16 +6,12 @@ class Routes:
     class Base:
         PREFIX: ClassVar[str] = '/base'
         FlagsRead : ClassVar[str] = '/flags_read'
-        ConfigCreate : ClassVar[str] = '/config_create'
-        ConfigReadLast : ClassVar[str] = '/config_read_last'
-        ConfigReadHistory : ClassVar[str] = '/configs_history'
 
-    class Strategy:
-        PREFIX: ClassVar[str] = '/strategy'
-        Create: ClassVar[str] = '/create'
-        ReadOne: ClassVar[str] = '/read_one'
+    class Candle:
+        PREFIX: ClassVar[str] = '/candle'
+        CreateMany: ClassVar[str] = '/create_many'
+        CreateManyByFile: ClassVar[str] = '/create_many_by_file'
         ReadMany: ClassVar[str] = '/read_many'
-        Update: ClassVar[str] = '/update'
 
     class Symbol:
         PREFIX: ClassVar[str] = '/symbol'
@@ -23,21 +19,13 @@ class Routes:
         ReadMany: ClassVar[str] = '/read_many'
 
 
-    class Pattern:
-        PREFIX: ClassVar[str] = '/pattern'
-        Create: ClassVar[str] = '/create_one'
-        CreateMany: ClassVar[str] = '/create_many'
-        CreateGroup: ClassVar[str] = '/create_many'
-
-        ReadOne: ClassVar[str] = '/read_one'
+    class Broker:
+        PREFIX: ClassVar[str] = '/broker'
+        CreateOne: ClassVar[str] = '/create_one'
         ReadMany: ClassVar[str] = '/read_many'
-        ReadOneGroup: ClassVar[str] = '/read_one_group'
-        ReadManyGroups: ClassVar[str] = '/read_many_groups'
 
-    class Trading:
-        PREFIX: ClassVar[str] = '/trading'
 
-        CreatePlaceOrderRequest: ClassVar[str] = '/create_place_order_request'
-
-        ReadOnePlaceOrderRequest: ClassVar[str] = '/read_one_place_order_request'
-
+    class TimeFrame:
+        PREFIX: ClassVar[str] = '/time_frame'
+        CreateOne: ClassVar[str] = '/create_one'
+        ReadMany: ClassVar[str] = '/read_many'

@@ -1,14 +1,14 @@
-from typing import ClassVar
 import talib
-from apps.backtester.data.data_models import Line
+from apps.backtester.data.static_models.data_models import Line
+from toolz import first
 
 class BacktesterLines:
-    Close: Line = Line(id=1, name='SMA', line_type='PRICE', function=None)
-    Open: Line = Line(id=2, name='SMA', line_type='PRICE', function=None)
-    High: Line = Line(id=3, name='SMA', line_type='PRICE', function=None)
-    Low: Line = Line(id=4, name='SMA', line_type='PRICE', function=None)
-    Volume: Line = Line(id=5, name='SMA', line_type='PRICE', function=None)
-    ATR: Line = Line(id=6, name='SMA', line_type='TRUE_RANGE', function=talib.ATR)
+    Close: Line = Line(id=1, name='Close', line_type='PRICE', function=None)
+    Open: Line = Line(id=2, name='Open', line_type='PRICE', function=None)
+    High: Line = Line(id=3, name='High', line_type='PRICE', function=None)
+    Low: Line = Line(id=4, name='Low', line_type='PRICE', function=None)
+    Volume: Line = Line(id=5, name='Volume', line_type='PRICE', function=None)
+    ATR: Line = Line(id=6, name='ATR', line_type='TRUE_RANGE', function=talib.ATR)
     SMA: Line = Line(id=7, name='SMA', line_type='MA', function=talib.SMA)
     EMA: Line = Line(id=8, name='EMA', line_type='MA', function=talib.EMA)
     WMA: Line = Line(id=9, name='WMA', line_type='MA', function=talib.WMA)
@@ -29,4 +29,16 @@ class BacktesterLines:
         return [
             {'id' : i.id, 'name' : i.name} for i in cls.read_many_lines() if i.line_type == 'MA'
         ]
+
+    @classmethod
+    def read_line_by_id(cls, id : int) -> Line:
+        line = first(
+            [line for line in cls.read_many_lines() if line.id == id],
+        )
+        if line is None:
+            raise ValueError(f'No line with id {id}')
+
+        return line
+
+
 

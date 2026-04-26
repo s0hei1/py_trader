@@ -1,9 +1,2 @@
-from .kama_buy_strategy import KamaBuyStrategy
+from third_party.backtrader_plus.strategies.kama_buy_strategy import KamaBuyStrategy
 
-__all__ = [
-    'KamaBuyStrategy'
-]
-
-strategies = {
-    'Kama Buy Strategy' : KamaBuyStrategy
-}

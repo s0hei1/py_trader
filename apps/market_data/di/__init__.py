@@ -1,4 +1,4 @@
-from apps.py_trader.di.container import Container
+from apps.market_data.di.container import Container
 
 __all__ = ["Container"]
 

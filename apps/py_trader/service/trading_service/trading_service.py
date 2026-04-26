@@ -7,9 +7,7 @@ from apps.py_trader.service.time_service.time_service import TimeService
 from apps.py_trader.service.trading_service.trading_schema import PlaceOrderRequestCreate
 from third_party import mt5_overhead
 
-
 class TradingService:
-
 
     def __init__(self, session: AsyncSession, time_service: TimeService):
         self.session = session
@@ -67,3 +65,4 @@ class TradingService:
             return 1000001
         else:
             return code + 1
+

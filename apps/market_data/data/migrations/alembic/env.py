@@ -11,9 +11,9 @@ def get_current_path_parent(path: AnyStr, depth=1):
 
 sys.path.append(get_current_path_parent(path=os.path.abspath(__file__), depth=6))
 
-from apps.py_trader.di.container import Container
+from apps.market_data.di.container import Container
 from logging.config import fileConfig
-from apps.py_trader.data.models.models import Base
+from apps.market_data.data.models.models import Base
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context

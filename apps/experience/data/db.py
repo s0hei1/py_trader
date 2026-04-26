@@ -8,6 +8,7 @@ def get_engine(url=Settings().database_url) -> AsyncEngine:
     return create_async_engine(url, echo=True)
 
 
+
 def get_session(engine=get_engine(), class_=AsyncSession) -> sessionmaker:
     return sessionmaker(engine, expire_on_commit=False, class_=class_)
 

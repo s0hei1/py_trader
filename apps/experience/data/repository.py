@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, Sequence
-from apps.experience.models import Experience
+from apps.experience.data.models import Experience
 
 
 class ExperienceRepository:

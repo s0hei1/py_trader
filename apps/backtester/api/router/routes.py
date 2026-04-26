@@ -3,7 +3,7 @@ from typing import ClassVar
 class Routes:
 
     class MABacktesting:
-        PREFIX: ClassVar[str] = '/ma_backtesting'
+        PREFIX: ClassVar[str] = '/backtesting_service'
         BackTest : ClassVar[str] = '/back_test'
         ReadManyMAs : ClassVar[str] = '/read_ma'
 

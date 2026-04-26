@@ -1,7 +1,7 @@
 from datetime import datetime
 from pydantic import BaseModel, ConfigDict
 
-from apps.experience.models import Experience
+from apps.experience.data.models import Experience
 
 
 class ExperienceCreate(BaseModel):

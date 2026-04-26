@@ -1,4 +1,7 @@
-class TradeDetailsAnalyzer(bt.Analyzer):
+from backtrader import AutoOrderedDict,Analyzer
+from backtrader.trade import Trade
+
+class TradeDetailsAnalyzer(Analyzer):
 
     def notify_trade(self, trade: Trade):
         if trade.isclosed:
@@ -17,3 +20,14 @@ class TradeDetailsAnalyzer(bt.Analyzer):
         self.rets = AutoOrderedDict()
 
         self.rets.trades_ = []
+
+    def get_analysis(self,as_dataframe=False):
+        analysis = super(TradeDetailsAnalyzer, self).get_analysis()
+
+        if as_dataframe:
+            import pandas as pd
+            trades_ = [dict(i) for i in self.rets.trades_]
+            return pd.DataFrame(trades_)
+
+
+        return analysis

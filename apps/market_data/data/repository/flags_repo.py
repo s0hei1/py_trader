@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from apps.py_trader.data.models.models import Flags
+from apps.market_data.data.models.models import Flags
 
 
 class FlagsRepo:
