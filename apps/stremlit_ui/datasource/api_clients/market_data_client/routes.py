@@ -1,6 +1,5 @@
 from typing import ClassVar
 
-
 class Routes:
 
     class Base:
@@ -17,12 +16,10 @@ class Routes:
         CreateOne: ClassVar[str] = '/create_one'
         ReadMany: ClassVar[str] = '/read_many'
 
-
     class Broker:
         PREFIX: ClassVar[str] = '/broker'
         CreateOne: ClassVar[str] = '/create_one'
         ReadMany: ClassVar[str] = '/read_many'
-
 
     class TimeFrame:
         PREFIX: ClassVar[str] = '/time_frame'

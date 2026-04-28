@@ -86,4 +86,3 @@ class StatementDocument(Base):
     len_trades_lost_max : Mapped[int]
     len_trades_lost_avg : Mapped[float]
 
-
