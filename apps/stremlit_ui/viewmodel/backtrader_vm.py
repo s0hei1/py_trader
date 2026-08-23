@@ -55,6 +55,9 @@ class BackTraderVM:
 
     def run_strategy(self):
         df_for_feed = self._market_data.copy(deep=True)
+        print('df_for_feed.columns')
+        print(df_for_feed.columns)
+
         df_for_feed['date_time'] = pd.to_datetime(df_for_feed['date_time'])
         df_for_feed = df_for_feed.set_index("date_time")
         df_for_feed['volume'] = 0
@@ -146,10 +149,10 @@ class BackTraderVM:
     def get_market_data_info(self) -> tuple[list[BrokerModel],list[SymbolModel],list[TimeFrameModel]]:
         return self._market_data_brokers, self._market_data_symbols, self._market_data_time_frames
 
-    def get_market_data(self, broker_id : int, symbol_id : int, time_frame_id : int):
+    def get_market_data(self, broker_id : int, symbol_id : int, time_frame_name : str):
         self._market_data = self._market_data_api_client.get_candles(
             ReadManyCandlesRequest(
-                time_frame_id = time_frame_id,
+                time_frame_id = time_frame_name,
                 broker_id = broker_id,
                 symbol_id = symbol_id,
             ),
@@ -158,7 +161,7 @@ class BackTraderVM:
         self._market_data = self._market_data.rename(
             columns={'open_' : 'open'}
         )
-        print(self._market_data.columns)
+
 
     @property
     def is_data_feed(self):

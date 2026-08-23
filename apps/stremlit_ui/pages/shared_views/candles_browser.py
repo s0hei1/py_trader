@@ -24,7 +24,7 @@ def candles_browser_view(
 
     broker_map = {b.name: b.id for b in brokers}
     symbol_map = {s.name: s.id for s in symbols}
-    tf_map = {t.name: t.id for t in tfs}
+    tf_list = [t.name for t in tfs]
 
     col1, col2, col3 = st.columns(3)
 
@@ -35,12 +35,12 @@ def candles_browser_view(
         selected_symbol = st.selectbox("Symbol", list(symbol_map.keys()))
 
     with col3:
-        selected_tf = st.selectbox("Time Frame", list(tf_map.keys()))
+        selected_tf = st.selectbox("Time Frame", tf_list)
 
     if st.button("Load Candles"):
         try:
             req = ReadManyCandlesRequest(
-                time_frame_id=tf_map[selected_tf],
+                time_frame_name=selected_tf,
                 broker_id=broker_map[selected_broker],
                 symbol_id=symbol_map[selected_symbol]
             )

@@ -52,6 +52,7 @@ class MarketDataAPIClient():
                                                                                               CandleModel] | pd.DataFrame:
         response = self.client.get(Routes.Candle.PREFIX + Routes.Candle.ReadMany, params=request.to_dict())
 
+
         if to_dataframe:
             return pd.DataFrame(response.json())
         return [CandleModel.from_dict(d) for d in response.json()]

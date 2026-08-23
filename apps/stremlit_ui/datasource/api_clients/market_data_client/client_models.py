@@ -21,8 +21,13 @@ class BrokerModel:
 
 @dataclass
 class SymbolModel:
-    name : str
+    base_currency : str
+    quote_currency : str
     id : int | None = None
+
+    @property
+    def name(self):
+        return f"{self.base_currency}{self.quote_currency}"
 
     def to_dict(self, without_id : bool = False):
         d = asdict(self)
@@ -37,8 +42,6 @@ class SymbolModel:
 @dataclass
 class TimeFrameModel:
     name : str
-    resolution : int
-    id : int | None = None
 
     def to_dict(self, without_id : bool = False):
         d = asdict(self)
@@ -77,7 +80,7 @@ class CandleModel:
 
 @dataclass
 class ReadManyCandlesRequest:
-    time_frame_id : int
+    time_frame_id : str
     broker_id : int
     symbol_id : int
 

@@ -86,7 +86,7 @@ with cols[2]:
 
     try:
         tfs = api.get_time_frames()
-        st.dataframe([{"id": t.id, "name": t.name, "resolution": t.resolution} for t in tfs])
+        st.dataframe([{ "name": t.name} for t in tfs])
     except Exception as e:
         st.error(f"Failed loading time frames: {e}")
 
